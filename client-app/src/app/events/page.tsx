@@ -5,6 +5,7 @@ import { App, Avatar, Button, Divider, List, Select, Tag, Tooltip, Input, Modal 
 import TextArea from "antd/es/input/TextArea";
 import EventRecord from "@/components/EventRecord/EventRecord";
 import cl from "./events.module.css"
+import BasicLayout from "@/components/BasicLayout";
 
 const Labeled: React.FC<{ children: any; label: string }> = (props) => {
   return (
@@ -87,6 +88,7 @@ const Home: React.FC = () => {
   ]
 
   return (
+    <BasicLayout>
     <div className="overflow-auto flex flex-row h-full w-full bg-slate-200 rounded-lg">
       <Modal title="Заполнение формы" open={open} onOk={handleOk} confirmLoading={confirmLoading} onCancel={(handleCancel)}>
         <div  className="flex flex-col gap-3">
@@ -188,6 +190,7 @@ const Home: React.FC = () => {
         </div>
       </div>
     </div>
+    </BasicLayout>
   );
 };
 
