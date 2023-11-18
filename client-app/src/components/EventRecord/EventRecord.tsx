@@ -29,14 +29,14 @@ const EventRecord: React.FC<EventRecordProps> = ({type, label, date}) => {
     <div className="bg-white flex flex-row justify-between items-center border-solid border border-slate-200 px-4 py-2">
       {/*<Tag color={tagColor} className="col-start-1 row-start-1 text-center text-xs">{tagText}</Tag>*/}
       <div className="flex flex-row items-center gap-5">
-        <div className={`w-5 h-5 ${tagColor} rounded-full`}></div>
+        <div className={`w-2 h-2 ${tagColor} rounded-full`}></div>
         <div className="flex flex-col">
           <div className="font-semibold ">{label}</div>
           <div className="text-xs">{date}</div>
           <div className="text-xs">Тестов Тест</div>
         </div>
       </div>
-      <Button className="col-start-4 row-start-1" type="text">Просмотр</Button>
+      <Button className="col-start-4 row-start-1" type="link">Просмотр</Button>
     </div>
   );
 };
