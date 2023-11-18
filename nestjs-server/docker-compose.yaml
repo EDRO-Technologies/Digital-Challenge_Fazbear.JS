@@ -1,0 +1,43 @@
+# docker compose --env-file ./.env config
+# docker compose build
+# docker compose up
+# docker compose down
+
+services:
+  postgres:
+    image: postgres:16.0-alpine
+    ports:
+      - ${DATABASE_PORT}:5432
+    volumes:
+      - ./db-vol:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    expose:
+      - ${DATABASE_PORT}
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    ports:
+      - ${PGADMIN_PORT}:80
+      - ${PGADMIN_PORT_TLS}:443
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+
+  # adminer:
+  #   image: adminer
+  #   restart: always
+  #   ports:
+  #     - ${ADMINER_PORT}:8080
+
+  # api:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - ${APP_PORT}:${APP_PORT}
+
+volumes:
+  boilerplate-db:
