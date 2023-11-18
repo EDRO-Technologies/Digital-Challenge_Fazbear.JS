@@ -1,35 +1,39 @@
 "use client";
 
 import { User } from "@/models/User";
-import { Avatar, Button, Image } from "antd";
+import { Avatar, Button, Divider, Form, Image, Input } from "antd";
 import React, { useState, useEffect } from "react";
-import {getToken, setToken} from "@/app/api/token";
+import { getToken, setToken } from "@/app/api/token";
 import authFetch from "@/services/AuthFetchService";
 import api from "@/services/GetAuthorizedUserService";
 import { useRouter } from "next/navigation";
+
+type FieldType = {
+  username?: string;
+  password?: string;
+  remember?: string;
+};
 
 export default function AnotherPage() {
   const [user, setUser] = useState<User | undefined>(undefined);
   const { push } = useRouter();
 
-
   const getData = async () => {
-    const {data} = await api.get(`http://192.168.137.1:3000/auth/hello`);
+    const { data } = await api.get(`http://192.168.137.1:3000/auth/hello`);
     console.log(data);
-  }
+  };
 
   useEffect(() => {
     const handleMessage = (e: any) => {
-
       if (e.origin !== "http://192.168.137.1:3000") return;
 
-      const {accessToken, ...user} = JSON.parse(e.data);
+      const { accessToken, ...user } = JSON.parse(e.data);
 
       if (accessToken) {
         setUser(new User(user));
         setToken(accessToken);
 
-        push('/events');
+        push("/events");
       }
     };
 
@@ -41,6 +45,7 @@ export default function AnotherPage() {
   }, []);
 
   const login = (provider: string) => {
+
     const authWindow = window.open(
       `http://192.168.137.1:3000/auth/${provider}`,
       "Auth",
@@ -57,18 +62,58 @@ export default function AnotherPage() {
 
   return (
     <div className="flex flex-row justify-center items-center bg-slate-200 w-full h-full">
-      <div className="px-4 py-4 justify-between rounded-lg flex flex-col bg-white min-w-[200px] gap-2 border-slate-300 border border-solid">
-        <Image className="mb-8" width={200} src={'https://upload.wikimedia.org/wikipedia/ru/2/2d/Gazprom-Logo-rus.svg'}/>
-        
-        <div className="flex flex-col gap-2">
-          <Button onClick={() => login('google')}>Google</Button>
-          <Button type="primary" onClick={() => login('yandex')}>Yandex</Button>
+      <div className="px-4 py-4 justify-between items-center rounded-lg flex flex-col bg-white min-w-[200px]  border-slate-300 border border-solid">
+        <Image
+          className="mb-8"
+          preview={false}
+          width={200}
+          alt="Газпром"
+          src={
+            "https://upload.wikimedia.org/wikipedia/ru/2/2d/Gazprom-Logo-rus.svg"
+          }
+        />
 
+        <Form
+          name="basic"
+          labelCol={{ span: 8 }}
+          className="w-full mb-0"
+          // initialValues
+          // onFinish={onFinish}  
+          // onFinishFailed={onFinishFailed}
+          autoComplete="off"
+        >
+          <Form.Item<FieldType>
+            label="Email"
+            name="username"
+            rules={[{ required: true, message: "Введите email!" }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item<FieldType>
+            label="Пароль"
+            name="password"
+            rules={[{ required: true, message: "Введите пароль" }]}
+          >
+            <Input.Password />
+          </Form.Item>
+
+          <Form.Item className="w-full mb-0">
+            <Button className="w-full mt-4" type="primary" htmlType="submit">
+              Войти
+            </Button>
+          </Form.Item>
+        </Form>
+        <Divider />
+        <div className="flex w-full flex-col gap-2">
+          {/* <Button onClick={() => login("google")}>Google</Button> */}
+          <Button onClick={() => login("yandex")}>
+            Yandex
+          </Button>
+          <Button onClick={() => push("/events")}>
+            Войти как гость
+          </Button>
         </div>
-
-        {/* <Avatar src={user?.picture}/>
-        <p>{user?.email}</p>
-        <p>{user?.fullName}</p> */}
       </div>
     </div>
   );
