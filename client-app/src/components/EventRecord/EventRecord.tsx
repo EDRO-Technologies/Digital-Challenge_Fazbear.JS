@@ -1,6 +1,6 @@
 import React from "react";
-import classes  from "./EventRecord.module.css";
-import {Button, Tag} from "antd";
+import classes from "./EventRecord.module.css";
+import { Button, Tag } from "antd";
 
 interface EventRecordProps {
   type: number;
@@ -8,8 +8,9 @@ interface EventRecordProps {
   date: string;
 }
 
-const EventRecord: React.FC<EventRecordProps> = ({type, label, date}) => {
+const EventRecord: React.FC<EventRecordProps> = ({ type, label, date }) => {
   let tagColor;
+
   // let tagText;
   if(type == 0) {
     tagColor  = classes.type_1;
@@ -37,6 +38,7 @@ const EventRecord: React.FC<EventRecordProps> = ({type, label, date}) => {
         </div>
       </div>
       <Button className="col-start-4 row-start-1" type="link">Просмотр</Button>
+
     </div>
   );
 };
