@@ -28,6 +28,12 @@ export class User {
   @Column({ nullable: true })
   authMethod: string;
 
+  @Column({ nullable: true })
+  post: string;
+
+  @Column({ nullable: true })
+  role: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

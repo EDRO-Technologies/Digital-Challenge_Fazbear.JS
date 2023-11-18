@@ -1,0 +1,18 @@
+.critical {
+    border-radius: 50%;
+    margin-right: 4px;
+    width: 0.5rem/* 8px */;
+    height: 0.5rem;
+}
+
+.type_1 {
+    background: limegreen;
+}
+
+.type_2 {
+    background: yellow;
+}
+
+.type_3 {
+    background: red;
+}
