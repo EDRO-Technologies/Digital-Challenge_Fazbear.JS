@@ -3,16 +3,27 @@
 import { User } from "@/models/User";
 import { Avatar, Button } from "antd";
 import React, { useState, useEffect } from "react";
+import {getToken, setToken} from "@/app/api/token";
+import authFetch from "@/services/AuthFetchService";
+import api from "@/services/GetAuthorizedUserService";
 
 export default function AnotherPage() {
   const [user, setUser] = useState<User | undefined>(undefined);
 
+  const getData = async () => {
+    const {data} = await api.get(`http://192.168.137.1:3000/auth/hello`);
+    console.log(data);
+  }
+
   useEffect(() => {
     const handleMessage = (e: any) => {
-      if (e.origin !== "http://localhost:3000") return;
 
-      setUser(new User(JSON.parse(e.data)));
-      console.log(e.data);
+      if (e.origin !== "http://192.168.137.1:3000") return;
+
+      const {accessToken, ...user} = JSON.parse(e.data);
+
+      setUser(new User(user));
+      setToken(accessToken);
     };
 
     window.addEventListener("message", handleMessage);
