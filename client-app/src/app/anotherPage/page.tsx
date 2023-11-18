@@ -24,7 +24,7 @@ export default function AnotherPage() {
 
   const login = (provider: string) => {
     const authWindow = window.open(
-      `http://localhost:3000/auth/${provider}`,
+      `http://192.168.137.1:3000/auth/${provider}`,
       "Auth",
       "width=500,height=500,status=yes,toolbar=no,menubar=no,location=no"
     );

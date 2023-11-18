@@ -29,8 +29,8 @@ export default function RootLayout({
               <Layout>
                 <AppMenu />
                 <Layout className="bg-slate-200">
-                  <Header className="bg-white"  >Headerdsafsad</Header>
-                  <Content className=" min-h-[280px] mx-4 my-6 rounded-lg">
+                  <Header className="bg-white border-b border-solid border-slate-200"  >Headerdsafsad</Header>
+                  <Content className=" min-h-[280px] rounded-lg">
                     {children}
                   </Content>
                 </Layout>
