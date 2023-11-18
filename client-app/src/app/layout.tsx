@@ -22,7 +22,17 @@ export default function RootLayout({children,}:{children: React.ReactNode;}){
         <App className="w-full h-full flex flex-row">
           <StyledComponentsRegistry>
             <ConfigProvider>
-              {children}
+              <Layout>
+                <AppMenu />
+                <Layout className="bg-slate-200">
+                  <Header className="text-lg flex items-center bg-white border-b border-solid border-slate-200">
+                    Электронный журнал регистрации
+                  </Header>
+                  <Content className="min-h-[280px] rounded-lg">
+                    {children}
+                  </Content>
+                </Layout>
+              </Layout>
             </ConfigProvider>
           </StyledComponentsRegistry>
         </App>

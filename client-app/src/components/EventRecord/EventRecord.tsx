@@ -10,28 +10,33 @@ interface EventRecordProps {
 
 const EventRecord: React.FC<EventRecordProps> = ({type, label, date}) => {
   let tagColor;
-  let tagText;
+  // let tagText;
   if(type == 0) {
-    tagColor  = "success";
-    tagText   = "норма"
+    tagColor  = classes.type_1;
+    // tagText   = "норма"
   } else if(type == 1) {
-    tagColor  = "warning";
-    tagText   = "внимание"
+    tagColor  = classes.type_2;
+    // tagText   = "внимание"
   } else if (type == 2) {
-    tagColor  = "error";
-    tagText   = "опасно"
+    tagColor  = classes.type_3;
+    // tagText   = "опасно"
   } else if(type == 3) {
-    tagColor  = "processing";
-    tagText   = "смена"
+    tagColor  = classes.type_4;
+    // tagText   = "смена"
   }
 
   return (
-    <div className="bg-white items-center border-solid grid grid-cols-4 grid-rows-2 border border-slate-200 px-4 py-4">
-      <Tag color={tagColor} className="col-start-1 row-start-1 text-center text-xs">{tagText}</Tag>
-      <div className="font-semibold col-start-1 row-start-2 col-span-2">{label}</div>
-      <div className="col-start-1 row-start-3 text-xs">{date}</div>
-      <div className="col-start-2 row-start-3 text-xs">Тестов Тест</div>
-      <Button className="col-start-4 row-start-2" type="primary">Просмотр</Button>
+    <div className="bg-white flex flex-row justify-between items-center border-solid border border-slate-200 px-4 py-2">
+      {/*<Tag color={tagColor} className="col-start-1 row-start-1 text-center text-xs">{tagText}</Tag>*/}
+      <div className="flex flex-row items-center gap-5">
+        <div className={`w-5 h-5 ${tagColor} rounded-full`}></div>
+        <div className="flex flex-col">
+          <div className="font-semibold ">{label}</div>
+          <div className="text-xs">{date}</div>
+          <div className="text-xs">Тестов Тест</div>
+        </div>
+      </div>
+      <Button className="col-start-4 row-start-1" type="text">Просмотр</Button>
     </div>
   );
 };

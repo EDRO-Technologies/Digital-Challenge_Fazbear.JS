@@ -10,9 +10,13 @@
 }
 
 .type_2 {
-    background: yellow;
+    background: #ea9615;
 }
 
 .type_3 {
     background: red;
+}
+
+.type_4 {
+    background: lightskyblue;
 }
