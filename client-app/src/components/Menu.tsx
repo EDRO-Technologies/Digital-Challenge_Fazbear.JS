@@ -28,7 +28,7 @@ export default function AppMenu() {
       label: "Navigation Three - Submenu",
       key: "SubMenu",
       icon: <SettingOutlined />,
-      onClick: () => push("/anotherPage"),
+      onClick: () => push("/login"),
     },
   ];
 
