@@ -4,7 +4,6 @@ import { User } from "@/models/User";
 import { Avatar, Button } from "antd";
 import React, { useState, useEffect } from "react";
 import {getToken, setToken} from "@/app/api/token";
-import authFetch from "@/services/AuthFetchService";
 import api from "@/services/GetAuthorizedUserService";
 
 export default function AnotherPage() {
