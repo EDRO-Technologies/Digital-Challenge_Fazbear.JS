@@ -42,7 +42,7 @@ const Home: React.FC = () => {
         <Button onClick={showModal} type="primary">
           СИНИЙ БОТТОН??? 
         </Button>
-        <Modal title="Заполнение формы"open={open} onOk={handleOk} confirmLoading={confirmLoading} onCancel={(handleCancel)}>
+        <Modal title="Заполнение формы" open={open} onOk={handleOk} confirmLoading={confirmLoading} onCancel={(handleCancel)}>
           <div  className="flex flex-col gap-3">
           <div className="flex flex-row gap-3 items-center w-full">
               <text>Уровень критичности</text>
