@@ -39,15 +39,23 @@ export class AuthController {
 
   @Get('yandex/callback')
   @UseGuards(AuthGuard('yandex'))
-  authYandexCallback(@Req() req, @Response() res) {
+  async authYandexCallback(@Req() req, @Response() res) {
     if (!req.user)
       throw new HttpException("No user from yandex", HttpStatus.FORBIDDEN);
 
+    const userWithToken = await this.authService.socialLogin(new SocialUser(req.user));
+
     res.send(
       `<script>window.opener.postMessage('${JSON.stringify(
-        new SocialUser(req.user),
+        userWithToken,
       )}', '*');window.close()</script>`,
     );
+  }
+
+  @Get('user')
+  @UseGuards(Protected)
+  getUser(@Req() req) {
+    return req?.user;
   }
 
   @Get('hello')
@@ -55,4 +63,6 @@ export class AuthController {
   test(@Req() req) {
     return 'Hello';
   }
+
+
 }
