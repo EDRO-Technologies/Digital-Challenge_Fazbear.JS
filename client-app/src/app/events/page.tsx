@@ -1,10 +1,15 @@
 "use client"; // If used in Pages Router, is no need to add "use client"
 
-import React from "react";
+import React, { useEffect } from "react";
 import { App, Avatar, Button, Divider, List, Select, Tag, Tooltip } from "antd";
 import TextArea from "antd/es/input/TextArea";
+
+import BasicLayout from "@/components/BasicLayout";
+import api from "@/services/GetAuthorizedUserService";
+
 import EventRecord from "@/components/EventRecord/EventRecord";
 import cl from "./events.module.css"
+
 
 const Labeled: React.FC<{ children: any; label: string }> = (props) => {
   return (
@@ -55,6 +60,7 @@ const HistoryList: React.FC = () => {
 const Home: React.FC = () => {
   const { message } = App.useApp();
 
+
   const eventData = [
     {label: 'закрытие смены', type: 3, date: "12.03.23 8:00"},
     {label: 'Привозка груза', type: 1, date: "12.03.23 8:00"},
@@ -91,8 +97,8 @@ const Home: React.FC = () => {
             <h1 className="text-2xl">Инцидент #1</h1>
             <Tag color={"green"}>Обычное</Tag>
           </div>
-          <Button>Редактировать</Button>
         </div>
+
         <div className="flex flex-col gap-4">
           <Labeled label="Тип:">
             <Select
@@ -118,25 +124,22 @@ const Home: React.FC = () => {
                 <Avatar style={{ backgroundColor: "#f56a00" }}>K</Avatar>
               </a>
               <Tooltip title="Ant User" placement="top">
+
                 <Avatar
-                  style={{ backgroundColor: "#87d068" }}
-                  // icon={< />}
+                  style={{ backgroundColor: "#1677ff" }}
+                  // icon={<AntDesignOutlined />}
                 />
-              </Tooltip>
-              <Avatar
-                style={{ backgroundColor: "#1677ff" }}
-                // icon={<AntDesignOutlined />}
-              />
-            </Avatar.Group>
-          </Labeled>
-        </div>
-        <Divider />
-        <h2 className="text-xl">История изменений</h2>
-        <div className="overflow-auto">
-          <HistoryList />
+              </Avatar.Group>
+            </Labeled>
+          </div>
+          <Divider />
+          <h2 className="text-xl">История изменений</h2>
+          <div className="overflow-auto">
+            <HistoryList />
+          </div>
         </div>
       </div>
-    </div>
+    </BasicLayout>
   );
 };
 

@@ -9,6 +9,7 @@ import { PassportModule } from "@nestjs/passport";
 import { GoogleStrategy } from "./auth/strategies/google.strategy";
 import { JwtModule, JwtModuleOptions } from "@nestjs/jwt";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { EventModule } from "src/event/event.module";
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
     ConfigModule.forRoot(),
     UserModule,
     AuthModule,
+    EventModule
   ],
   controllers: [AppController],
   providers: [AppService],

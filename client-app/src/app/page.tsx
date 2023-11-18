@@ -1,10 +1,14 @@
 "use client"; // If used in Pages Router, is no need to add "use client"
 
+
+import BasicLayout from "@/components/BasicLayout";
+
 import React, { useState } from "react";
 import { App, Button, Modal } from "antd";
 import { Avatar, Skeleton, Switch, Input, Select, InputNumber } from 'antd';
 
 const { TextArea } = Input;
+
 
 const Home: React.FC = () => {
   const { message } = App.useApp();
@@ -30,7 +34,10 @@ const Home: React.FC = () => {
   };
   
   return (
-    <div className="flex flex-row p-10 justify-center h-full w-full bg-white rounded-lg">
+
+    <BasicLayout>
+
+    <div className="flex flex-row items-center justify-center h-full w-full bg-white rounded-lg">
       <div>
         <Button onClick={showModal} type="primary">
           СИНИЙ БОТТОН??? 
@@ -58,6 +65,7 @@ const Home: React.FC = () => {
       </div>
     </div>
 
+    </BasicLayout>
 
   );
 };
