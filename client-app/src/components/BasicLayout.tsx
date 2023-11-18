@@ -16,7 +16,7 @@ const UserContainer: React.FC = () => {
 
 export default function BasicLayout({children}: any) {
   return (
-    <Layout>
+    <Layout className="flex h-full w-full">
       <AppMenu />
       <Layout className="bg-slate-200">
         <Header className="flex items-center justify-between bg-white border-b border-solid border-slate-200">

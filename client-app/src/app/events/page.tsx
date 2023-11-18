@@ -84,7 +84,7 @@ const VersionList: React.FC = () => {
       mode="left"
       items={[
         {
-          label: <div>"2015-09-01"</div>,
+          label: <div className="flex flex-row w-full">2015-09-01 09:12:11</div>,
           children: <Item />,
         },
         {
@@ -204,9 +204,9 @@ const Home: React.FC = () => {
         onCancel={handleCancel}
         open={open}
       />
-      <div className="overflow-auto flex flex-row h-full w-full bg-slate-200 rounded-lg">
+      <div className=" overflow-auto flex flex-row h-full w-full  rounded-lg">
         <div className="flex flex-col max-w-[450px] w-full">
-          <div className="px-4 py-4 bg-slate-100 justify-between flex flex-row">
+          <div className="border-solid border-b mb-2 border-slate-300 px-2 py-4 bg-slate-50 justify-between flex flex-row">
             <Button>Экспорт данных</Button>
             <Button onClick={showModal} type="primary">
               Добавить
@@ -214,7 +214,7 @@ const Home: React.FC = () => {
           </div>
 
           <div
-            className={`flex flex-col overflow-y-scroll ${cl.hideScrollBar}`}
+            className="bg-slate-200 px-2 flex flex-col overflow-y-scroll"
           >
             {eventData.map((data) => (
               <EventRecord

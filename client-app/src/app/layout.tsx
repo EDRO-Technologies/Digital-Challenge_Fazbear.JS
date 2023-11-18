@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <App className="w-full min-h-full h-0 flex flex-row">
+        <App className="w-full h-full flex flex-row">
           <StyledComponentsRegistry>
             <ConfigProvider>{children}</ConfigProvider>
           </StyledComponentsRegistry>
