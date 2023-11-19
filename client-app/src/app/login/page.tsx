@@ -8,6 +8,8 @@ import authFetch, { getUser, loginUserByEmail } from "@/services/AuthFetchServic
 import api from "@/services/GetAuthorizedUserService";
 import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
+import styles from "./login.module.css";
+import {SmileOutlined, SmileTwoTone} from "@ant-design/icons";
 
 type FieldType = {
   username?: string;
@@ -81,7 +83,7 @@ export default function AnotherPage() {
   };
 
   return (
-    <div className="flex flex-row justify-center items-center bg-slate-200 w-full h-full">
+    <div className={`flex flex-row justify-center items-center bg-slate-200 w-full h-full ${styles.bg}`}>
       
       <div className="px-4 py-4 justify-between items-center rounded-lg flex flex-col bg-white min-w-[200px]  border-slate-300 border border-solid">
         <Image
@@ -128,8 +130,14 @@ export default function AnotherPage() {
         <Divider />
         <div className="flex w-full flex-col gap-2">
           {/* <Button onClick={() => login("google")}>Google</Button> */}
-          <Button onClick={() => login("yandex")}>Yandex</Button>
-          <Button onClick={() => push("/events")}>Войти как гость</Button>
+          <Button
+            onClick={() => login("yandex")}
+            icon={<SmileTwoTone twoToneColor={"red"}/>}
+            className={styles.yandexBtn}
+          >Войти с Яндекс ID</Button>
+          <Button
+            onClick={() => push("/events")}
+          >Войти как гость</Button>
         </div>
       </div>
     </div>
