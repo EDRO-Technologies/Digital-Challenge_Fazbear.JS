@@ -18,6 +18,8 @@ import TextArea from "antd/es/input/TextArea";
 import EventRecord from "@/components/EventRecord/EventRecord";
 import cl from "./events.module.css";
 import BasicLayout from "@/components/BasicLayout";
+import NewEventForm from "@/components/NewEventForm";
+import EditEventForm from "@/components/EditEventForm";
 
 const Labeled: React.FC<{ children: any; label: string }> = (props) => {
   return (
@@ -107,108 +109,133 @@ const ModalAddNewEvent: React.FC<{
   open: boolean;
   handleOk: () => void;
   confirmLoading: boolean;
-  onCancel: () => void;
-}> = ({ open, handleOk, confirmLoading, onCancel }) => {
+  handleCancel: () => void;
+}> = ({ open, handleOk, confirmLoading, handleCancel }) => {
   return (
     <Modal
-      title="Заполнение формы"
       open={open}
-      onOk={handleOk}
+      title="Добавить событие"
       confirmLoading={confirmLoading}
-      onCancel={onCancel}
+      onOk={handleOk}
+      onCancel={handleCancel}
+      footer ={[
+        <Button key="back" onClick={handleCancel} className="border-rose-600 text-rose-600 hover:bg-rose-600">
+          Отменить
+        </Button>,
+        <Button key="submit" onClick={handleCancel} type="primary">
+          Подтвердить
+        </Button>,
+      ]}
     >
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-row gap-3 items-center w-full">
-          <text>Название</text>
-          <Input />
-        </div>
-        <div className="flex flex-row gap-3 items-center w-full">
-          <text>Уровень критичности</text>
+      <NewEventForm />
+    </Modal>
+  );
+};
 
-          <Select
-            defaultValue=" "
-            className="flex-auto"
-            onChange={() => {}}
-            options={[
-              { value: "0", label: "Слабо" },
-              { value: "1", label: "Умеренно" },
-              { value: "2", label: "Сильно" },
-            ]}
-          />
-        </div>
-        <div className="flex flex-row gap-3 items-center">
-          <text>Тип события</text>
-          <Select
-            defaultValue=" "
-            className="flex-auto"
-            onChange={() => {}}
-            options={[
-              { value: "0", label: "начало смены" },
-              { value: "1", label: "закрытие смены" },
-              { value: "2", label: "другое" },
-            ]}
-          />
-        </div>
-        <text>Описание события:</text>
-        <TextArea rows={4} />
-      </div>
+const ModalEditEvent: React.FC<{
+  open: boolean;
+  handleOk: () => void;
+  confirmLoading: boolean;
+  handleCancel: () => void;
+}> = ({ open, handleOk, confirmLoading, handleCancel }) => {
+  return (
+    <Modal
+      open={open}
+      title="Редактировать событие"
+      confirmLoading={confirmLoading}
+      onOk={handleOk}
+      onCancel={handleCancel}
+      footer ={[
+        <Button key="back" onClick={handleCancel} className="border-rose-600 text-rose-600 hover:bg-rose-600">
+          Отменить
+        </Button>,
+        <Button key="submit" onClick={handleCancel} type="primary">
+          Подтвердить
+        </Button>,
+      ]}
+    >
+      <EditEventForm />
     </Modal>
   );
 };
 
 const Home: React.FC = () => {
   const { message } = App.useApp();
-  const [open, setOpen] = useState(false);
+  const [newEventOpen, setNewEventOpen] = useState(false);
+  const [editEventOpen, setEditEventOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
 
-  const showModal = () => {
-    setOpen(true);
+
+  const showNewEventModal = () => {
+    setNewEventOpen(true);
   };
 
-  const handleOk = () => {
+  const showEditEventModal = () => {
+    setEditEventOpen(true);
+  };
+
+  const handleNewEventOk = () => {
     setConfirmLoading(true);
     setTimeout(() => {
-      setOpen(false);
+      setNewEventOpen(false);
       setConfirmLoading(false);
     }, 2000);
   };
 
-  const handleCancel = () => {
+  const handleNewEventCancel = () => {
     console.log("Clicked cancel button");
-    setOpen(false);
+    setNewEventOpen(false);
+  };
+  const handleEditEventOk = () => {
+    setConfirmLoading(true);
+    setTimeout(() => {
+      setEditEventOpen(false);
+      setConfirmLoading(false);
+    }, 2000);
+  };
+
+  const handleEditEventCancel = () => {
+    console.log("Clicked cancel button");
+    setEditEventOpen(false);
   };
 
   const eventData = [
-    { label: "закрытие смены", type: 3, date: "12.03.23 8:00" },
-    { label: "Привозка груза", type: 1, date: "12.03.23 8:00" },
-    { label: "Привозка груза", type: 0, date: "12.03.23 8:00" },
-    { label: "Привозка груза", type: 2, date: "12.03.23 8:00" },
-    { label: "Привозка груза", type: 0, date: "12.03.23 8:00" },
-    { label: "Привозка груза", type: 0, date: "12.03.23 8:00" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00" },
+    { label: "закрытие смены", risk: 3, date: "12.03.23 8:00", version: 3, eventType: "accident" },
+    { label: "Привозка груза", risk: 1, date: "12.03.23 8:00", version: 1, eventType: "command" },
+    { label: "Привозка груза", risk: 0, date: "12.03.23 8:00", version: 2, eventType: "other" },
+    { label: "Привозка груза", risk: 2, date: "12.03.23 8:00", version: 4, eventType: "accident" },
+    { label: "Привозка груза", risk: 0, date: "12.03.23 8:00", version: 1, eventType: "command" },
+    { label: "Привозка груза", risk: 0, date: "12.03.23 8:00", version: 1, eventType: "command" },
+    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 1, eventType: "accident" },
+    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 5, eventType: "other" },
+    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 1, eventType: "other" },
+    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 2, eventType: "other" },
+    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 4, eventType: "other" },
+    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 2, eventType: "other" },
+    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 3, eventType: "accident" },
+    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 2, eventType: "command" },
+    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 1, eventType: "command" },
   ];
 
   return (
     <BasicLayout>
       <ModalAddNewEvent
         confirmLoading={confirmLoading}
-        handleOk={handleOk}
-        onCancel={handleCancel}
-        open={open}
+        handleOk={handleNewEventOk}
+        handleCancel={handleNewEventCancel}
+        open={newEventOpen}
+      />
+      <ModalEditEvent
+        confirmLoading={confirmLoading}
+        handleOk={handleEditEventOk}
+        handleCancel={handleEditEventCancel}
+        open={editEventOpen}
       />
       <div className=" overflow-auto flex flex-row h-full w-full  rounded-lg">
         <div className="flex flex-col max-w-[450px] w-full">
           <div className="border-solid border-b mb-2 border-slate-300 px-2 py-4 bg-slate-50 justify-between flex flex-row">
             <Button>Экспорт данных</Button>
-            <Button onClick={showModal} type="primary">
+            <Button onClick={showNewEventModal} type="primary">
               Добавить
             </Button>
           </div>
@@ -218,10 +245,12 @@ const Home: React.FC = () => {
           >
             {eventData.map((data) => (
               <EventRecord
-                key={data.date}
-                label={data.label}
-                type={data.type}
-                date={data.date}
+                key       = {data.date}
+                label     = {data.label}
+                risk      = {data.risk}
+                date      = {data.date}
+                version   = {data.version}
+                eventType = {data.eventType}
               ></EventRecord>
             ))}
           </div>
@@ -231,27 +260,30 @@ const Home: React.FC = () => {
           <div className="flex flex-row justify-between mb-8">
             <div className="flex flex-row justify-center items-center gap-4">
               <h1 className="text-2xl">Инцидент #1</h1>
-              <Tag color={"green"}>Обычное</Tag>
+              <Tag color="processing" className="font-semibold">версия 3</Tag>
             </div>
-            <Button danger>Редактировать</Button>
+            <Button danger onClick={showEditEventModal}>Редактировать</Button>
           </div>
           <div className="flex flex-col gap-4">
-            <Labeled label="Тип:">
-              <Select
-                disabled={true}
-                defaultValue="lucy"
-                style={{ width: 120 }}
-                // onChange={handleChange}
-                options={[
-                  { value: "jack", label: "Команда" },
-                  { value: "lucy", label: "Инцидент" },
-                  { value: "Yiminghe", label: "Критичность" },
-                ]}
-              />
-            </Labeled>
-            <Labeled label="Описание:">
-              <TextArea disabled={true}></TextArea>
-            </Labeled>
+            <p className="text-xl">
+              <span className="font-semibold">Тип:</span>
+              {"\t"} Инцидент
+            </p>
+            <p className="text-xl">
+              <span className="font-semibold">Уровень угрозы:</span>
+              {"\t"} <Tag color="success" style={{fontSize: "14px"}}>слабый</Tag>
+            </p>
+            <p>
+              <span className="text-xl font-semibold">Описание события:</span>
+              <p>
+                Lorem ipsum dolor sit amet,
+                consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                mollit anim id est laborum.
+              </p>
+            </p>
 
             <Labeled label="Кому предназначено:">
               <Avatar.Group>
