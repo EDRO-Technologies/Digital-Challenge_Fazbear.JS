@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 
 import {
+  App,
   Button,
   Form,
-  Input, message,
+  Input, InputNumber, message,
   Select, Upload, UploadProps,
 } from 'antd';
 import {UploadOutlined} from "@ant-design/icons";
 import {Simulate} from "react-dom/test-utils";
 import submit = Simulate.submit;
+import { addEvent } from '@/services/EventService';
 
 const { Option } = Select;
 
@@ -57,8 +59,32 @@ const props: UploadProps = {
 const NewEventForm: React.FC = () => {
   const [form] = Form.useForm();
 
-  const onFinish = (values: any) => {
+  const {message} = App.useApp();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const onFinish = async (values: any) => {
     console.log('Received values of form: ', values);
+
+    const type = values['event-type'];
+
+    setIsLoading(true);
+    await addEvent({
+      end_date: 0,
+      description: values['event-description'],
+      level: +values['event-risk'],
+      type: type === 'Принятие смены' 
+        ? 3 
+        : type === 'Сообщение' 
+        ? 0
+        : type === 'Команда'
+        ? 1 
+        : 2,
+      version: 0
+    });
+    setIsLoading(false);
+    message.success('Запись успешно добавлена');
+
+    
   };
 
   const eventTypeSelector = (
@@ -109,7 +135,17 @@ const NewEventForm: React.FC = () => {
           label="Тип события"
           rules={[{ required: true, message: 'Укажите тип события' }]}
         >
-          <Input addonAfter={eventTypeSelector} style={{ width: '100%' }} />
+          <Select
+            defaultValue=""
+            style={{ width: '100%' }}
+            // onChange={handleChange}
+            options={[
+              { value: 'Принятие смены', label: 'Принятие смены' },
+              { value: 'Команда', label: 'Команда' },
+              { value: 'Сообщение', label: 'Сообщение' },
+              { value: 'Индцидент', label: 'Инцидент'},
+            ]}
+          />
         </Form.Item>
 
         <Form.Item
@@ -117,7 +153,7 @@ const NewEventForm: React.FC = () => {
           label="Важность события"
           rules={[{ required: true, message: 'Please input donation amount!' }]}
         >
-          <Input addonAfter={eventRiskSelector} style={{ width: '100%' }} />
+          <InputNumber style={{ width: 120 }} />
         </Form.Item>
 
         <Form.Item
@@ -128,8 +164,8 @@ const NewEventForm: React.FC = () => {
           <Input.TextArea showCount maxLength={100} />
         </Form.Item>
         <Form.Item {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">
-            создать событие
+          <Button loading={isLoading} type="primary" htmlType="submit">
+            Добавить запись
           </Button>
         </Form.Item>
       </Form>

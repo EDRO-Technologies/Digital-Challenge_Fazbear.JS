@@ -18,7 +18,12 @@ import EventRecord from "@/components/EventRecord/EventRecord";
 import BasicLayout from "@/components/BasicLayout";
 import NewEventForm from "@/components/NewEventForm";
 import EditEventForm from "@/components/EditEventForm";
-import {ExperimentOutlined, FireOutlined, SafetyOutlined, ToolOutlined} from "@ant-design/icons";
+import {
+  ExperimentOutlined,
+  FireOutlined,
+  SafetyOutlined,
+  ToolOutlined,
+} from "@ant-design/icons";
 import { getAllEvents } from "@/services/EventService";
 import { AxiosError } from "axios";
 import { Event } from "@/models/Event";
@@ -33,19 +38,39 @@ const Labeled: React.FC<{ children: any; label: string }> = (props) => {
 };
 
 interface ItemListProps {
-  name:     string;
-  action:   string;
+  name: string;
+  action: string;
 }
 
 const VersionList: React.FC = () => {
   const versionListData = [
-    {datetime: "2023-09-01 09:12:11", name: "Тестович Т.Т.", action: "Изменил поле ****"},
-    {datetime: "2023-08-30 12:00:00", name: "Пользович П.П.", action: "Устранил инцидент номер 123"},
-    {datetime: "2023-08-29 09:55:04", name: "Юзерович Ю.Ю.", action: "Провел техническое тестирование"},
-    {datetime: "2023-07-15 11:23:06", name: "Испытаючич И.И.", action: "Закрыл смену"},
-    {datetime: "2023-08-29 09:55:04", name: "Юзерович Ю.Ю.", action: "Провел техническое тестирование"},
-  ]
-  const Item: React.FC<ItemListProps> = ({name, action}) => {
+    {
+      datetime: "2023-09-01 09:12:11",
+      name: "Тестович Т.Т.",
+      action: "Изменил поле ****",
+    },
+    {
+      datetime: "2023-08-30 12:00:00",
+      name: "Пользович П.П.",
+      action: "Устранил инцидент номер 123",
+    },
+    {
+      datetime: "2023-08-29 09:55:04",
+      name: "Юзерович Ю.Ю.",
+      action: "Провел техническое тестирование",
+    },
+    {
+      datetime: "2023-07-15 11:23:06",
+      name: "Испытаючич И.И.",
+      action: "Закрыл смену",
+    },
+    {
+      datetime: "2023-08-29 09:55:04",
+      name: "Юзерович Ю.Ю.",
+      action: "Провел техническое тестирование",
+    },
+  ];
+  const Item: React.FC<ItemListProps> = ({ name, action }) => {
     return (
       <div className="flex flex-row justify-between items-start">
         <div className="flex flex-col">
@@ -57,17 +82,14 @@ const VersionList: React.FC = () => {
     );
   };
 
-
   return (
     <Timeline
       className="w-full"
       mode="left"
-      items ={versionListData.map((data) => (
-        {
-          label: <div className="flex flex-row w-full">{data.datetime}</div>,
-          children: <Item name={data.name} action={data.action}/>
-        }
-      ))}
+      items={versionListData.map((data) => ({
+        label: <div className="flex flex-row w-full">{data.datetime}</div>,
+        children: <Item name={data.name} action={data.action} />,
+      }))}
     />
   );
 };
@@ -85,8 +107,12 @@ const ModalAddNewEvent: React.FC<{
       confirmLoading={confirmLoading}
       onOk={handleOk}
       onCancel={handleCancel}
-      footer ={[
-        <Button key="back" onClick={handleCancel} className="border-rose-600 text-rose-600 hover:bg-rose-600">
+      footer={[
+        <Button
+          key="back"
+          onClick={handleCancel}
+          className="border-rose-600 text-rose-600 hover:bg-rose-600"
+        >
           Отменить
         </Button>,
       ]}
@@ -109,8 +135,12 @@ const ModalEditEvent: React.FC<{
       confirmLoading={confirmLoading}
       onOk={handleOk}
       onCancel={handleCancel}
-      footer ={[
-        <Button key="back" onClick={handleCancel} className="border-rose-600 text-rose-600 hover:bg-rose-600">
+      footer={[
+        <Button
+          key="back"
+          onClick={handleCancel}
+          className="border-rose-600 text-rose-600 hover:bg-rose-600"
+        >
           Отменить
         </Button>,
       ]}
@@ -124,11 +154,13 @@ const { RangePicker } = DatePicker;
 
 const Home: React.FC = () => {
   const { message } = App.useApp();
-  const [newEventOpen, setNewEventOpen]     = useState(false);
-  const [editEventOpen, setEditEventOpen]   = useState(false);
+  const [newEventOpen, setNewEventOpen] = useState(false);
+  const [editEventOpen, setEditEventOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   // const [dateRangeOpen, setDateRangeOpen]   = useState(false);
-  const [currentEvent, setCurrentEvent] = useState<Event | undefined>(undefined);
+  const [currentEvent, setCurrentEvent] = useState<Event | undefined>(
+    undefined
+  );
   const [isEventsLoading, setEventsLoading] = useState<boolean>(true);
 
   const showNewEventModal = () => {
@@ -137,6 +169,19 @@ const Home: React.FC = () => {
 
   const showEditEventModal = () => {
     setEditEventOpen(true);
+  };
+
+  const fetch = async () => {
+    try {
+      setEventsLoading(true);
+      const res = await getAllEvents();
+      setEventsLoading(false);
+      setEventData(res);
+    } catch (e) {
+      message.error(
+        `${(e as AxiosError).cause} ${(e as AxiosError).message}`
+      );
+    }
   };
 
   const handleNewEventOk = (e: any) => {
@@ -150,6 +195,7 @@ const Home: React.FC = () => {
   };
 
   const handleNewEventCancel = () => {
+    fetch();
     setNewEventOpen(false);
   };
 
@@ -160,45 +206,16 @@ const Home: React.FC = () => {
       setConfirmLoading(false);
     }, 2000);
   };
-  
+
   const handleEditEventCancel = () => {
     setEditEventOpen(false);
   };
-  
-  const [eventData, setEventData] = useState<Event[]>([]);
-  
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        setEventsLoading(true);
-        const res = await getAllEvents();
-        setEventsLoading(false);
-        setEventData(res);
-      } catch (e) {
-        message.error(`${(e as AxiosError).cause} ${(e as AxiosError).message}`);
-      }
-    }
 
+  const [eventData, setEventData] = useState<Event[]>([]);
+
+  useEffect(() => {
     fetch();
-  }, [])
-  
-  // const eventData = [
-  //   { label: "закрытие смены", risk: 3, date: "12.03.23 8:00", version: 3, eventType: "accident" },
-  //   { label: "Привозка груза", risk: 1, date: "12.03.23 8:00", version: 1, eventType: "command" },
-  //   { label: "Привозка груза", risk: 0, date: "12.03.23 8:00", version: 2, eventType: "other" },
-  //   { label: "Привозка груза", risk: 2, date: "12.03.23 8:00", version: 4, eventType: "accident" },
-  //   { label: "Привозка груза", risk: 0, date: "12.03.23 8:00", version: 1, eventType: "command" },
-  //   { label: "Привозка груза", risk: 0, date: "12.03.23 8:00", version: 1, eventType: "command" },
-  //   { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 1, eventType: "accident" },
-  //   { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 5, eventType: "other" },
-  //   { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 1, eventType: "other" },
-  //   { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 2, eventType: "other" },
-  //   { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 4, eventType: "other" },
-  //   { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 2, eventType: "other" },
-  //   { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 3, eventType: "accident" },
-  //   { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 2, eventType: "command" },
-  //   { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 1, eventType: "command" },
-  // ];
+  }, []);
 
   return (
     <BasicLayout>
@@ -218,7 +235,7 @@ const Home: React.FC = () => {
       <div className="overflow-auto flex flex-row h-full w-full  rounded-lg">
         <div className="flex flex-col max-w-[450px] w-full items-stretch gap-2">
           <div className="border-solid border-b border-slate-300 px-2 py-4 bg-slate-50 justify-between flex flex-row">
-            <Button>Экспорт данных</Button>
+            <Button href="http://192.168.137.217:8000/generate_reports/" >Экспорт данных</Button>
             <Button onClick={showNewEventModal} type="primary">
               Добавить
             </Button>
@@ -226,82 +243,111 @@ const Home: React.FC = () => {
           <div className="self-center">
             <RangePicker showTime />
           </div>
-          <div className="bg-slate-200 px-2 flex flex-col overflow-y-scroll">
-            <Spin spinning={isEventsLoading}>
-
-            
-            {eventData.map((data, index) => (
-              <EventRecord
-                key       = {data.id}
-                label     = {data.type.name}
-                risk      = {data.level}
-                date      = {data.creation_date.toLocaleDateString()}
-                version   = {data.version}
-                eventType = {data.type.name}
-                id = {index}
-                onView={(i) => setCurrentEvent(eventData[i])}
-              ></EventRecord>
-            ))}
-            </Spin>
-          </div>
+          <Spin className="h-full" spinning={isEventsLoading}>
+            <div className="bg-slate-200 px-2 flex min-h-[300px] h-full flex-col overflow-y-scroll">
+              {eventData.map((data, index) => (
+                <EventRecord
+                  key={data.id}
+                  label={data.type.name}
+                  risk={data.level}
+                  date={data.creation_date.toLocaleDateString()}
+                  version={data.version}
+                  eventType={data.type.name}
+                  id={index}
+                  onView={(i) => setCurrentEvent(eventData[i])}
+                ></EventRecord>
+              ))}
+            </div>
+          </Spin>
         </div>
 
-        {!currentEvent && <div className="bg-slate-50 flex w-full flex-row justify-center items-center"><Empty/></div>}
+        {!currentEvent && (
+          <div className="bg-slate-50 flex w-full flex-row justify-center items-center">
+            <Empty />
+          </div>
+        )}
 
-        {currentEvent && <div className="bg-white w-full h-0 min-h-full px-16 py-4">
-          <div className="flex flex-row justify-between mb-8">
-            <div className="flex flex-row justify-center items-center gap-4">
-              <h1 className="text-2xl">{`${currentEvent?.type.name} #${currentEvent?.id}`}</h1>
-              <Tag color="processing" className="font-semibold">{`версия ${currentEvent?.version}`}</Tag>
+        {currentEvent && (
+          <div className="bg-white w-full h-0 min-h-full px-16 py-4">
+            <div className="flex flex-row justify-between mb-8">
+              <div className="flex flex-row justify-center items-center gap-4">
+                <h1 className="text-2xl">{`${currentEvent?.type.name} #${currentEvent?.id}`}</h1>
+                <Tag
+                  color="processing"
+                  className="font-semibold"
+                >{`версия ${currentEvent?.version}`}</Tag>
+              </div>
+              <Button danger onClick={showEditEventModal}>
+                Редактировать
+              </Button>
             </div>
-            <Button danger onClick={showEditEventModal}>Редактировать</Button>
-          </div>
-          <div className="flex flex-col gap-4">
-            <p>
-              <span className="font-bold" style={{fontSize: "17px"}}>Тип:</span>
-              {"\t"} <span style={{fontSize: "17px"}}>{currentEvent?.type.name}</span>
-            </p>
-            <p>
-              <span className="font-bold" style={{fontSize: "17px"}}>Уровень угрозы:</span>
-              {"\t"} <Tag color="success" style={{fontSize: "14px"}}>{currentEvent?.level}</Tag>
-            </p>
-            <p>
-              <span className="font-bold" style={{fontSize: "17px"}}>Описание события:</span>
+            <div className="flex flex-col gap-4">
               <p>
-                {currentEvent?.description}
+                <span className="font-bold" style={{ fontSize: "17px" }}>
+                  Тип:
+                </span>
+                {"\t"}{" "}
+                <span style={{ fontSize: "17px" }}>
+                  {currentEvent?.type.name}
+                </span>
               </p>
-            </p>
+              <p>
+                <span className="font-bold" style={{ fontSize: "17px" }}>
+                  Уровень угрозы:
+                </span>
+                {"\t"}{" "}
+                <Tag color="success" style={{ fontSize: "14px" }}>
+                  {currentEvent?.level}
+                </Tag>
+              </p>
+              <p>
+                <span className="font-bold" style={{ fontSize: "17px" }}>
+                  Описание события:
+                </span>
+                <p>{currentEvent?.description}</p>
+              </p>
 
-            <p className="font-bold" style={{fontSize: "17px"}}>Кому предназначено:</p>
-            <Labeled label="">
-              <Tag
-                icon={<FireOutlined />}
-                color={"red"}
-                className="p-2 font-semibold"
-              >Пожарня часть</Tag>
-              <Tag
-                icon={<SafetyOutlined />}
-                color={"blue"}
-                className="p-2 font-semibold"
-              >Охранная часть</Tag>
-              <Tag
-                icon={<ToolOutlined />}
-                color={"warning"}
-                className="p-2 font-semibold"
-              >Инженеры</Tag>
-              <Tag
-                icon={<ExperimentOutlined />}
-                color={"success"}
-                className="p-2 font-semibold"
-              >Хим безопасность</Tag>
-            </Labeled>
+              <p className="font-bold" style={{ fontSize: "17px" }}>
+                Кому предназначено:
+              </p>
+              <Labeled label="">
+                <Tag
+                  icon={<FireOutlined />}
+                  color={"red"}
+                  className="p-2 font-semibold"
+                >
+                  Пожарня часть
+                </Tag>
+                <Tag
+                  icon={<SafetyOutlined />}
+                  color={"blue"}
+                  className="p-2 font-semibold"
+                >
+                  Охранная часть
+                </Tag>
+                <Tag
+                  icon={<ToolOutlined />}
+                  color={"warning"}
+                  className="p-2 font-semibold"
+                >
+                  Инженеры
+                </Tag>
+                <Tag
+                  icon={<ExperimentOutlined />}
+                  color={"success"}
+                  className="p-2 font-semibold"
+                >
+                  Хим безопасность
+                </Tag>
+              </Labeled>
+            </div>
+            <Divider />
+            <h2 className="text-xl font-semibold">История изменений</h2>
+            <div className="overflow-y-auto h-64 py-4 px-4 w-auto  flex flex-col justify-start items-start">
+              <VersionList />
+            </div>
           </div>
-          <Divider />
-          <h2 className="text-xl font-semibold">История изменений</h2>
-          <div className="overflow-y-auto h-64 py-4 px-4 w-auto  flex flex-col justify-start items-start">
-            <VersionList />
-          </div>
-        </div>}
+        )}
       </div>
     </BasicLayout>
   );
