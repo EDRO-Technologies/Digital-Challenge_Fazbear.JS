@@ -200,21 +200,21 @@ const Home: React.FC = () => {
   };
 
   const eventData = [
-    { label: "закрытие смены", type: 3, date: "12.03.23 8:00", version: "вер 3"},
-    { label: "Привозка груза", type: 1, date: "12.03.23 8:00", version: "вер 1" },
-    { label: "Привозка груза", type: 0, date: "12.03.23 8:00", version: "вер 2" },
-    { label: "Привозка груза", type: 2, date: "12.03.23 8:00", version: "вер 4" },
-    { label: "Привозка груза", type: 0, date: "12.03.23 8:00", version: "вер 1" },
-    { label: "Привозка груза", type: 0, date: "12.03.23 8:00", version: "вер 1" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00", version: "вер 1" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00", version: "вер 5" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00", version: "вер 1" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00", version: "вер 2" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00", version: "вер 4" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00", version: "вер 2" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00", version: "вер 3" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00", version: "вер 2" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00", version: "вер 1" },
+    { label: "закрытие смены", risk: 3, date: "12.03.23 8:00", version: 3, eventType: "accident" },
+    { label: "Привозка груза", risk: 1, date: "12.03.23 8:00", version: 1, eventType: "command" },
+    { label: "Привозка груза", risk: 0, date: "12.03.23 8:00", version: 2, eventType: "other" },
+    { label: "Привозка груза", risk: 2, date: "12.03.23 8:00", version: 4, eventType: "accident" },
+    { label: "Привозка груза", risk: 0, date: "12.03.23 8:00", version: 1, eventType: "command" },
+    { label: "Привозка груза", risk: 0, date: "12.03.23 8:00", version: 1, eventType: "command" },
+    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 1, eventType: "accident" },
+    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 5, eventType: "other" },
+    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 1, eventType: "other" },
+    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 2, eventType: "other" },
+    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 4, eventType: "other" },
+    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 2, eventType: "other" },
+    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 3, eventType: "accident" },
+    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 2, eventType: "command" },
+    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 1, eventType: "command" },
   ];
 
   return (
@@ -245,11 +245,12 @@ const Home: React.FC = () => {
           >
             {eventData.map((data) => (
               <EventRecord
-                key={data.date}
-                label={data.label}
-                type={data.type}
-                date={data.date}
-                version={data.version}
+                key       = {data.date}
+                label     = {data.label}
+                risk      = {data.risk}
+                date      = {data.date}
+                version   = {data.version}
+                eventType = {data.eventType}
               ></EventRecord>
             ))}
           </div>
@@ -259,27 +260,30 @@ const Home: React.FC = () => {
           <div className="flex flex-row justify-between mb-8">
             <div className="flex flex-row justify-center items-center gap-4">
               <h1 className="text-2xl">Инцидент #1</h1>
-              <Tag color={"green"}>Обычное</Tag>
+              <Tag color="processing" className="font-semibold">версия 3</Tag>
             </div>
             <Button danger onClick={showEditEventModal}>Редактировать</Button>
           </div>
           <div className="flex flex-col gap-4">
-            <Labeled label="Тип:">
-              <Select
-                disabled={true}
-                defaultValue="lucy"
-                style={{ width: 120 }}
-                // onChange={handleChange}
-                options={[
-                  { value: "jack", label: "Команда" },
-                  { value: "lucy", label: "Инцидент" },
-                  { value: "Yiminghe", label: "Критичность" },
-                ]}
-              />
-            </Labeled>
-            <Labeled label="Описание:">
-              <TextArea disabled={true}></TextArea>
-            </Labeled>
+            <p className="text-xl">
+              <span className="font-semibold">Тип:</span>
+              {"\t"} Инцидент
+            </p>
+            <p className="text-xl">
+              <span className="font-semibold">Уровень угрозы:</span>
+              {"\t"} <Tag color="success" style={{fontSize: "14px"}}>слабый</Tag>
+            </p>
+            <p>
+              <span className="text-xl font-semibold">Описание события:</span>
+              <p>
+                Lorem ipsum dolor sit amet,
+                consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+                mollit anim id est laborum.
+              </p>
+            </p>
 
             <Labeled label="Кому предназначено:">
               <Avatar.Group>

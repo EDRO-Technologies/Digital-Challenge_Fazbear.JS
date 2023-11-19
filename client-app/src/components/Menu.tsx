@@ -4,9 +4,9 @@ import React from "react";
 
 import {  Menu, MenuProps } from "antd";
 import {
-  AppstoreOutlined,
+  AppstoreOutlined, BarChartOutlined, EyeFilled,
   MailOutlined,
-  SettingOutlined,
+  SettingOutlined, StockOutlined,
 } from "@ant-design/icons";
 import { permanentRedirect, redirect } from "next/navigation";
 
@@ -19,14 +19,20 @@ export default function AppMenu() {
 
   const items: MenuProps["items"] = [
     {
-      label: "Navigation One",
-      key: "mail",
-      icon: <MailOutlined />,
+      label: "Журнал оператора",
+      key: "operator",
+      icon: <EyeFilled />,
       onClick: () => push("/events"),
     },
     {
-      label: "Navigation Three - Submenu",
-      key: "SubMenu",
+      label: "Аналитика",
+      key: "analytics",
+      icon: <BarChartOutlined />,
+      onClick: () => push("/analytics"),
+    },
+    {
+      label: "Настройки",
+      key: "settings",
       icon: <SettingOutlined />,
       onClick: () => push("/login"),
     },
