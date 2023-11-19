@@ -2,9 +2,11 @@ pyOpenSSL>=23.2.0
 fastapi
 pydantic
 uvicorn
-pymongo
 python-jose[cryptography]
 bcrypt
 python-dotenv
-jinja2
-pyhtml2pdf
+peewee
+pandas
+reportlab
+docx
+openpyxl

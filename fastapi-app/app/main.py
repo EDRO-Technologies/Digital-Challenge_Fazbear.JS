@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
 
-from fastapi import FastAPI, Depends, Request, HTTPException
+from fastapi import FastAPI, Depends, Request, HTTPException, status, Header
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-
-from . import schemas, setlist_processer
-from .database import DB, create_access_token
+from jose import jwt, JWTError
+from .config import Config
+from . import schemas
+from .database import create_access_token
+from . import database as db
+from . import crud
 from typing import Union, List
 from pydantic import Json
 from enum import Enum
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, OAuth2AuthorizationCodeBearer
 from typing import Annotated
-
-
+from playhouse.shortcuts import model_to_dict
 
 app = FastAPI()
 
-db = DB()
+config = Config()
 
 origins = [
     "*"
@@ -31,171 +33,126 @@ app.add_middleware(
 )
 
 
+sleep_time = 10
+
+
+async def reset_db_state():
+    db.db._state._state.set(db.db_state_default.copy())
+    db.db._state.reset()
+
+
+def get_db(db_state=Depends(reset_db_state)):
+    try:
+        db.db.connect()
+        yield
+    finally:
+        if not db.db.is_closed():
+            db.db.close()
+
+
 class Tags(Enum):
-    setlists = "Setlists"
-    artists = "Artists"
+    events = "Events"
     common = "Common"
     users = "Users"
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+oauth2_scheme = OAuth2AuthorizationCodeBearer(authorizationUrl="user", tokenUrl="login")
 
 
-@app.get("/items/", tags=[Tags.common])
-async def read_items(token: Annotated[str, Depends(oauth2_scheme)]):
-    return {"token": token}
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, config.SECRET_KEY, algorithms=[config.ALGORITHM])
+        user_id: int = payload.get("sub").get("id")
+        if user_id is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+    user = crud.get_user(user_id)
+    if user is None:
+        raise credentials_exception
+
+    return user
 
 
-# DONE: Setlists API
-
-
-@app.get("/setlists/", response_model=List[schemas.Setlist], tags=[Tags.setlists])
-async def get_all_setlists():
-    return db.get_all_setlists()
-
-
-@app.get("/setlists/{setlist_id}", response_model=Union[schemas.Setlist, None], tags=[Tags.setlists])
-async def get_setlist(setlist_id: str):
-    return db.get_setlist_by_id(setlist_id)
-
-
-@app.post("/setlists/", response_model=schemas.Setlist, tags=[Tags.setlists])
-async def create_setlist(setlist: schemas.SetlistCreate):
-    return db.add_setlist(setlist.venue, setlist.city, setlist.date, setlist.comment, setlist.artist, setlist.songs)
-
-
-@app.delete("/setlists/{setlist_id}", response_model=schemas.DeleteResponse, tags=[Tags.setlists])
-async def delete_setlist(setlist_id: str):
-    return {"deleted_count": db.delete_setlist(setlist_id)}
-
-
-@app.put("/setlists/", response_model=Union[schemas.Setlist, None], tags=[Tags.setlists])
-async def update_setlist(item: schemas.Update):
-    return db.update_setlist(item.id, item.new_json)
-
-
-# DONE: Artists API
-
-@app.get("/artists/", response_model=List[schemas.Artist], tags=[Tags.artists])
-async def get_all_artists():
-    return db.get_all_artists()
-
-
-@app.get("/artists/{artist_id}", response_model=Union[schemas.Artist, None], tags=[Tags.artists])
-async def get_artist_by_id(artist_id: str):
-    return db.get_artist_by_id(artist_id)
-
-
-@app.get("/artists/name/{name}", response_model=Union[schemas.Artist, None], tags=[Tags.artists])
-async def get_artist_by_name(name: str):
-    return db.get_artist_by_name(name)[0]
-
-
-@app.post("/artists/", response_model=schemas.Artist, tags=[Tags.artists])
-async def create_artist(artist: schemas.ArtistCreate):
-    created = db.add_artist(artist.name, artist.songs, [])
-    for user_login in artist.users:
-        user = db.get_user_by_login(user_login)
-        new = db.add_user_to_artist(created["_id"], user[0]["_id"])
-    return new
-
-
-@app.post("/artists/user/", response_model=schemas.Artist, tags=[Tags.artists])
-async def add_user_to_artist(data: schemas.ArtistUser):
-    user = db.get_user_by_login(data.login)
-    if not user:
-        raise HTTPException(status_code=400, detail="User not found")
-    artist = db.add_user_to_artist(data.id, user[0]["_id"])
-    if not artist:
-        raise HTTPException(status_code=400, detail="Artist not found")
-    return artist
-
-
-@app.delete("/artists/{artist_id}", response_model=schemas.DeleteResponse, tags=[Tags.artists])
-async def delete_artist(artist_id: str):
-    return {"deleted_count": db.delete_artist(artist_id)}
-
-
-@app.put("/artists/", response_model=Union[schemas.Artist, None], tags=[Tags.artists])
-async def update_artist(item: schemas.Update):
-    return db.update_artist(item.id, item.new_json)
-
-
-@app.put("/artists/song/", response_model=Union[schemas.Artist, None], tags=[Tags.artists])
-async def add_artist_song(item: schemas.ArtistSong):
-    return db.add_artist_song(item.id, item.song)
-
-
-@app.delete("/artists/song/", response_model=Union[schemas.Artist, None], tags=[Tags.artists])
-async def delete_artist_song(item: schemas.ArtistSong):
-    return db.delete_artist_song(item.id, item.song)
+async def get_user_token(auth):
+    if not auth.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+    token = auth.split(" ")[1]
+    try:
+        payload = jwt.decode(token, config.SECRET_KEY, algorithms=[config.ALGORITHM])
+        user_id: int = int(payload.get("id"))
+        user = crud.get_user(user_id)
+        if user is None:
+            raise JWTError
+        user_dict = model_to_dict(user)
+        user_dict["token"] = token
+        return user_dict
+    except JWTError as e:
+        # print(e)
+        raise HTTPException(status_code=401, detail="Invalid token")
 
 
 # DONE: Users API
 
 
-@app.get("/users/", response_model=List[schemas.User], tags=[Tags.users])
-async def get_all_users():
-    return db.get_all_users()
+@app.get("/user/", tags=[Tags.users], response_model=schemas.User)
+async def get_user(authorization: str = Header(...)):
+    print(authorization)
+    return await get_user_token(authorization)
 
 
-@app.get("/users/{user_id}", response_model=Union[schemas.User, None], tags=[Tags.users])
-async def get_user_by_id(user_id: str):
-    return db.get_user_by_id(user_id)
-
-
-@app.get("/users/login/{login}", response_model=Union[schemas.User, None], tags=[Tags.users])
-async def get_user_by_login(login: str):
-    return db.get_user_by_login(login)[0]
-
-
-@app.post("/login/", tags=[Tags.users]) # , response_model=Union[schemas.User, None]
-async def login_user(credentials: schemas.UserLogin): #
+@app.post("/login/", tags=[Tags.users], dependencies=[Depends(get_db)])
+async def login_user(credentials: schemas.UserLogin):
     email = credentials.email
     password = credentials.password
-    user = db.login_user(email, password)
+    user = crud.login_user(email, password)
+    # print(model_to_dict(user))
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     return {"access_token": create_access_token(user), "token_type": "bearer"}
 
 
-@app.post("/users/", response_model=Union[schemas.User, None, schemas.Error], tags=[Tags.users])
+@app.post("/users/", dependencies=[Depends(get_db)], response_model=Union[schemas.UserToken, None, schemas.Error], tags=[Tags.users])
 async def create_user(data: schemas.UserCreate):
-    return db.add_user(data.login, data.email, data.password)
+    user = crud.create_user(data)
+    user_dict = model_to_dict(user)
+    user_dict["token"] = create_access_token(user)
+    return user_dict
 
 
-@app.put("/users/", response_model=Union[schemas.User, None], tags=[Tags.users])
+@app.put("/users/", dependencies=[Depends(get_db)], response_model=Union[schemas.UserToken, None], tags=[Tags.users], deprecated=True)
 async def update_user(item: schemas.Update):
-    return db.update_user(item.id, item.new_json)
+    return crud.update_user(item.id, item.new_json)
 
 
-@app.delete("/users/{user_id}", response_model=schemas.DeleteResponse, tags=[Tags.users])
+@app.delete("/users/{user_id}", dependencies=[Depends(get_db)], response_model=schemas.DeleteResponse, tags=[Tags.users], deprecated=True)
 async def delete_user(user_id: str):
-    return {"deleted_count": db.delete_user(user_id)}
+    return {"deleted_count": crud.delete_user(user_id)}
 
 
-@app.post("/users/update_password", tags=[Tags.users])
-async def update_user_password(data: schemas.UserUpdatePassword):
-    user = db.update_password(data.email, data.password, data.new_password)
-    if not user:
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
-    return {"status": "Done"}
+# TODO: Event API
 
 
-
-# TODO: Common methods
-
-@app.get("/setlists/artist/{artist_name}", response_model=List[schemas.Setlist], tags=[Tags.common])
-async def get_setlists_by_artist(artist_name: str):
-    return db.get_setlists_by_artist(artist_name)
-
-
-@app.get("/setlists/html/{setlist_id}", tags=[Tags.common])
-async def get_setlist_html(setlist_id: str):
-    return HTMLResponse(setlist_processer.generate_html(setlist_id))
+@app.post("/events/", dependencies=[Depends(get_db)], tags=[Tags.events], response_model=schemas.Event)
+async def create_event(event: schemas.EventCreate, authorization: str = Header(...)):
+    user = await get_user_token(authorization)
+    event = crud.create_event(event, user["id"])
+    return event
 
 
-@app.get("/setlists/pdf/{setlist_id}", tags=[Tags.common])
-def get_setlist_pdf(setlist_id: str):
-    path = setlist_processer.generate_pdf(setlist_id)
-    return FileResponse(path=path, filename=f"{setlist_id}.pdf", media_type="application/pdf")
+@app.get("/events/", dependencies=[Depends(get_db)], tags=[Tags.events], response_model=List[schemas.Event])
+async def get_events(authorization: str = Header(...), skip: int = 0, limit: int = 100):
+    user = await get_user_token(authorization)
+    events = crud.get_events(skip=skip, limit=limit)
+    return events
+
+
+@app.get("/generate_reports/", tags=[Tags.common], dependencies=[Depends(get_db)])
+def get_setlist_pdf():
+    path = crud.generate_files()
+    return FileResponse(path=path, filename=f"Report.zip", media_type="application/zip")

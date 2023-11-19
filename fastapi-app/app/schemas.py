@@ -3,95 +3,114 @@ from datetime import datetime
 from typing import Any, List, Union
 
 from bson import objectid
-from pydantic import BaseModel, validator, root_validator
+from pydantic import BaseModel, validator, root_validator, field_validator
 from pydantic.utils import GetterDict
 
-
-class SetlistBase(BaseModel):
-    venue: str
-    city: str
-    date: datetime
-    comment: str
-    artist: str
-    songs: List[str] = []
+import peewee
+from pydantic import BaseModel, validator
+from pydantic.utils import GetterDict
+from . import database
 
 
-class SetlistCreate(SetlistBase):
-    pass
-
-
-class Setlist(SetlistBase):
-    id: Union[str, Any]
-
-    @root_validator(pre=True)
-    def _set_id(cls, data):
-        id = data.get("_id")
-        if id:
-            data["id"] = str(id)
-        return data
-
-
-class ArtistBase(BaseModel):
-    name: str
-    songs: List[str] = []
-    users: List[str] = []
-
-
-class ArtistCreate(ArtistBase):
-    pass
-
-
-class ArtistSong(BaseModel):
-    id: str
-    song: str
-
-
-class ArtistUser(BaseModel):
-    id: str
-    login: str
-
-
-class Artist(ArtistBase):
-    id: Union[str, Any]
-
-    @root_validator(pre=True)
-    def _set_id(cls, data):
-        id = data.get("_id")
-        if id:
-            data["id"] = str(id)
-        return data
-
-
-class UserBase(BaseModel):
-    login: str
-    email: str
-    artists: List[str] = []
-
-
-class UserCreate(BaseModel):
-    login: str
-    email: str
-    password: str
+class PeeweeGetterDict(GetterDict):
+    def get(self, key: Any, default: Any = None):
+        res = getattr(self._obj, key, default)
+        if isinstance(res, peewee.ModelSelect):
+            return list(res)
+        return res
 
 
 class UserLogin(BaseModel):
     email: str
-    password: str
+    password: Any
+
+
+class UserCreate(UserLogin):
+    firstName: str
+    lastName: str
+    post: str
+    role: str
+
+
+class User(UserCreate):
+    id: int
+    createdAt: Any
+
+    class Config:
+        orm_mode = True
+        getter_dict = PeeweeGetterDict
+
+
+    @validator("password")
+    def password_serialize(cls, v):
+        if type(v) is not str:
+            return str(v)
+
+    @validator("createdAt")
+    def integerize(cls, v):
+        if type(v) is not int:
+            return int(datetime.timestamp(v))
+
+
+class UserToken(User):
+    token: str
+
+
+class EventType(BaseModel):
+    id: int
+    name: str
+
+    class Config:
+        orm_mode = True
+        getter_dict = PeeweeGetterDict
+
+
+class File(BaseModel):
+    name: str
+    content: bytes
+
+    class Config:
+        orm_mode = True
+        getter_dict = PeeweeGetterDict
+
+
+class EventCreate(BaseModel):
+    end_date: int
+    description: str
+    type: int
+    level: int
+    version: int
+
+    class Config:
+        orm_mode = True
+        getter_dict = PeeweeGetterDict
+
+
+class Event(EventCreate):
+    id: int
+    creation_date: Any
+    end_date: Any
+    users_id: User
+    description: str
+    type: EventType
+    level: int
+    version: int
+
+
+class History(BaseModel):
+    id: int
+    event_id: Event
+    parent_id: Event
+    reason: str
+
+    class Config:
+        orm_mode = True
+        getter_dict = PeeweeGetterDict
+
 
 
 class UserUpdatePassword(UserLogin):
     new_password: str
-
-
-class User(UserBase):
-    id: Union[str, Any]
-
-    @root_validator(pre=True)
-    def _set_id(cls, data):
-        id = data.get("_id")
-        if id:
-            data["id"] = str(id)
-        return data
 
 
 class Update(BaseModel):

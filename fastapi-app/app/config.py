@@ -1,20 +1,27 @@
 import os
+from dotenv import load_dotenv
 
 
 class Config(object):
     def __init__(self):
-        self.MONGO_URI = os.getenv("MONGO_URI")
-        self.RABBIT_URL = os.getenv("RABBIT_URL")
-        self.RABBIT_QUEUE = os.getenv("RABBIT_QUEUE")
-        self.PLATFORM_DOMAIN = os.getenv("PLATFORM_DOMAIN")
-        self.DEV = os.getenv("DEV")
+        load_dotenv()
 
-        for var in vars(self):
-            if var == "DEV":
-                continue
-
-            if self.__getattribute__(var) is None:
-                raise ValueError(f"mail_worker: переменная '{var}' должна быть установлена в окружении")
+        self.ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+        self.ALGORITHM = os.getenv("ALGORITHM")
+        self.SECRET_KEY = os.getenv("SECRET_KEY")
+        self.DATABASE_TYPE = os.getenv("DATABASE_TYPE")
+        self.DATABASE_HOST = os.getenv("DATABASE_HOST")
+        self.DATABASE_PORT = os.getenv("DATABASE_PORT")
+        self.DATABASE_USERNAME = os.getenv("DATABASE_USERNAME")
+        self.DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
+        self.DATABASE_NAME = os.getenv("DATABASE_NAME")
+        #
+        # for var in vars(self):
+        #     if var == "DEV":
+        #         continue
+        #
+        #     if self.__getattribute__(var) is None:
+        #         raise ValueError(f"mail_worker: переменная '{var}' должна быть установлена в окружении")
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):

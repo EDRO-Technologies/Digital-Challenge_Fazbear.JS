@@ -5,7 +5,7 @@ from datetime import datetime
 
 import bcrypt
 
-from . import database as models, schemas
+from . import database as models, schemas, export_ex
 
 from typing import List, Union
 
@@ -71,3 +71,19 @@ def create_event(event: schemas.EventCreate, user_id: int):
 
 def get_events(skip: int = 0, limit: int = 100):
     return list(models.Event.select().offset(skip).limit(limit))
+
+
+def generate_files():
+    events = get_events()
+    table = []
+    for event in events:
+        struct = {
+            'date': event.creation_date,
+            'messages': event.type.name,
+            'shift_end': event.end_date,
+            'visas': event.version,
+            'notes': event.description,
+        }
+        table.append(struct)
+    path = export_ex.process_files(table)
+    return path
