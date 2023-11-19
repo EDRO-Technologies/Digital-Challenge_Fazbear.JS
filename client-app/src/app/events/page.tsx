@@ -1,6 +1,6 @@
 "use client"; // If used in Pages Router, is no need to add "use client"
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   App,
   Avatar,
@@ -16,6 +16,9 @@ import BasicLayout from "@/components/BasicLayout";
 import NewEventForm from "@/components/NewEventForm";
 import EditEventForm from "@/components/EditEventForm";
 import {ExperimentOutlined, FireOutlined, SafetyOutlined, SearchOutlined, ToolOutlined} from "@ant-design/icons";
+import { Event } from "@/models/Event";
+import { getAllEvents } from "@/services/EventService";
+import { AxiosError } from "axios";
 
 const Labeled: React.FC<{ children: any; label: string }> = (props) => {
   return (
@@ -105,7 +108,7 @@ const VersionList: React.FC = () => {
 
 const ModalAddNewEvent: React.FC<{
   open: boolean;
-  handleOk: () => void;
+  handleOk: (e: any) => void;
   confirmLoading: boolean;
   handleCancel: () => void;
 }> = ({ open, handleOk, confirmLoading, handleCancel }) => {
@@ -120,7 +123,7 @@ const ModalAddNewEvent: React.FC<{
         <Button key="back" onClick={handleCancel} className="border-rose-600 text-rose-600 hover:bg-rose-600">
           Отменить
         </Button>,
-        <Button key="submit" onClick={handleCancel} type="primary">
+        <Button key="submit" onClick={handleOk}  type="primary">
           Подтвердить
         </Button>,
       ]}
@@ -172,7 +175,9 @@ const Home: React.FC = () => {
     setEditEventOpen(true);
   };
 
-  const handleNewEventOk = () => {
+  const handleNewEventOk = (e: any) => {
+    console.log(e);
+
     setConfirmLoading(true);
     setTimeout(() => {
       setNewEventOpen(false);
@@ -191,29 +196,57 @@ const Home: React.FC = () => {
       setConfirmLoading(false);
     }, 2000);
   };
-
+  
   const handleEditEventCancel = () => {
     console.log("Clicked cancel button");
     setEditEventOpen(false);
   };
+  
+  const [eventData, setEventData] = useState<{
+    label: string;
+    risk: number;
+    date: Date;
+    version: number;
+    eventType: string;
+  }[]>([]);
+  
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const res = await getAllEvents();
 
-  const eventData = [
-    { label: "закрытие смены", risk: 3, date: "12.03.23 8:00", version: 3, eventType: "accident" },
-    { label: "Привозка груза", risk: 1, date: "12.03.23 8:00", version: 1, eventType: "command" },
-    { label: "Привозка груза", risk: 0, date: "12.03.23 8:00", version: 2, eventType: "other" },
-    { label: "Привозка груза", risk: 2, date: "12.03.23 8:00", version: 4, eventType: "accident" },
-    { label: "Привозка груза", risk: 0, date: "12.03.23 8:00", version: 1, eventType: "command" },
-    { label: "Привозка груза", risk: 0, date: "12.03.23 8:00", version: 1, eventType: "command" },
-    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 1, eventType: "accident" },
-    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 5, eventType: "other" },
-    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 1, eventType: "other" },
-    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 2, eventType: "other" },
-    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 4, eventType: "other" },
-    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 2, eventType: "other" },
-    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 3, eventType: "accident" },
-    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 2, eventType: "command" },
-    { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 1, eventType: "command" },
-  ];
+        setEventData(res.map(x => ({
+          label: x.description,
+          risk: x.level,
+          date: x.creation_date,
+          version: x.version,
+          eventType: x.type.name
+        })));
+      } catch (e) {
+        message.error(`${(e as AxiosError).cause} ${(e as AxiosError).message}`);
+      }
+    }
+
+    fetch();
+  }, [])
+  
+  // const eventData = [
+  //   { label: "закрытие смены", risk: 3, date: "12.03.23 8:00", version: 3, eventType: "accident" },
+  //   { label: "Привозка груза", risk: 1, date: "12.03.23 8:00", version: 1, eventType: "command" },
+  //   { label: "Привозка груза", risk: 0, date: "12.03.23 8:00", version: 2, eventType: "other" },
+  //   { label: "Привозка груза", risk: 2, date: "12.03.23 8:00", version: 4, eventType: "accident" },
+  //   { label: "Привозка груза", risk: 0, date: "12.03.23 8:00", version: 1, eventType: "command" },
+  //   { label: "Привозка груза", risk: 0, date: "12.03.23 8:00", version: 1, eventType: "command" },
+  //   { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 1, eventType: "accident" },
+  //   { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 5, eventType: "other" },
+  //   { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 1, eventType: "other" },
+  //   { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 2, eventType: "other" },
+  //   { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 4, eventType: "other" },
+  //   { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 2, eventType: "other" },
+  //   { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 3, eventType: "accident" },
+  //   { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 2, eventType: "command" },
+  //   { label: "Открытие смены", risk: 3, date: "12.03.23 8:00", version: 1, eventType: "command" },
+  // ];
 
   return (
     <BasicLayout>
@@ -244,10 +277,10 @@ const Home: React.FC = () => {
           >
             {eventData.map((data) => (
               <EventRecord
-                key       = {data.date}
+                key       = {data.label}
                 label     = {data.label}
                 risk      = {data.risk}
-                date      = {data.date}
+                date      = {data.date.toLocaleDateString()}
                 version   = {data.version}
                 eventType = {data.eventType}
               ></EventRecord>
