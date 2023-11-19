@@ -21,6 +21,7 @@ import EditEventForm from "@/components/EditEventForm";
 import {ExperimentOutlined, FireOutlined, SafetyOutlined, ToolOutlined} from "@ant-design/icons";
 import { getAllEvents } from "@/services/EventService";
 import { AxiosError } from "axios";
+import { Event } from "@/models/Event";
 
 const Labeled: React.FC<{ children: any; label: string }> = (props) => {
   return (
