@@ -8,6 +8,9 @@ interface EventRecordProps {
   date: string;
   version: number;
   eventType: string;
+
+  id: number;
+  onView: (id: number) => void;
 }
 
 const EventRecord: React.FC<EventRecordProps> = ({
@@ -16,6 +19,8 @@ const EventRecord: React.FC<EventRecordProps> = ({
     date,
     version,
     eventType,
+    id,
+    onView
   }) => {
   let riskColor;
   let tagText;
@@ -57,7 +62,7 @@ const EventRecord: React.FC<EventRecordProps> = ({
       <div className="flex flex-row items-center">
         <Tag color={tagColor}>{tagText}</Tag>
         <Tag color="processing" className="px-2">в {version}</Tag>
-        <Button type="link">Просмотр</Button>
+        <Button type="link" onClick={() => onView(id)}>Просмотр</Button>
       </div>
     </div>
   );

@@ -169,6 +169,7 @@ const Home: React.FC = () => {
   const [editEventOpen, setEditEventOpen]   = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   // const [dateRangeOpen, setDateRangeOpen]   = useState(false);
+  const [currentEvent, setCurrentEvent] = useState<Event | undefined>(undefined);
 
 
   const showNewEventModal = () => {
@@ -205,26 +206,14 @@ const Home: React.FC = () => {
     setEditEventOpen(false);
   };
   
-  const [eventData, setEventData] = useState<{
-    label: string;
-    risk: number;
-    date: Date;
-    version: number;
-    eventType: string;
-  }[]>([]);
+  const [eventData, setEventData] = useState<Event[]>([]);
   
   useEffect(() => {
     const fetch = async () => {
       try {
         const res = await getAllEvents();
 
-        setEventData(res.map(x => ({
-          label: x.description,
-          risk: x.level,
-          date: x.creation_date,
-          version: x.version,
-          eventType: x.type.name
-        })));
+        setEventData(res);
       } catch (e) {
         message.error(`${(e as AxiosError).cause} ${(e as AxiosError).message}`);
       }
@@ -278,45 +267,42 @@ const Home: React.FC = () => {
             <RangePicker showTime />
           </div>
           <div className="bg-slate-200 px-2 flex flex-col overflow-y-scroll">
-            {eventData.map((data) => (
+            {eventData.map((data, index) => (
               <EventRecord
-                key       = {data.label}
-                label     = {data.label}
-                risk      = {data.risk}
-                date      = {data.date.toLocaleDateString()}
+                key       = {data.id}
+                label     = {data.type.name}
+                risk      = {data.level}
+                date      = {data.creation_date.toLocaleDateString()}
                 version   = {data.version}
-                eventType = {data.eventType}
+                eventType = {data.type.name}
+                id = {index}
+                onView={(i) => setCurrentEvent(eventData[i])}
               ></EventRecord>
             ))}
           </div>
         </div>
 
-        <div className="bg-white w-full h-0 min-h-full px-16 py-4">
+        {currentEvent && <div className="bg-white w-full h-0 min-h-full px-16 py-4">
           <div className="flex flex-row justify-between mb-8">
             <div className="flex flex-row justify-center items-center gap-4">
-              <h1 className="text-2xl">Инцидент #1</h1>
-              <Tag color="processing" className="font-semibold">версия 3</Tag>
+              <h1 className="text-2xl">{`${currentEvent?.type.name} #${currentEvent?.id}`}</h1>
+              <Tag color="processing" className="font-semibold">{`версия ${currentEvent?.version}`}</Tag>
             </div>
             <Button danger onClick={showEditEventModal}>Редактировать</Button>
           </div>
           <div className="flex flex-col gap-4">
             <p>
               <span className="font-bold" style={{fontSize: "17px"}}>Тип:</span>
-              {"\t"} <span style={{fontSize: "17px"}}>Инцидент</span>
+              {"\t"} <span style={{fontSize: "17px"}}>{currentEvent?.type.name}</span>
             </p>
             <p>
               <span className="font-bold" style={{fontSize: "17px"}}>Уровень угрозы:</span>
-              {"\t"} <Tag color="success" style={{fontSize: "14px"}}>слабый</Tag>
+              {"\t"} <Tag color="success" style={{fontSize: "14px"}}>{currentEvent?.level}</Tag>
             </p>
             <p>
               <span className="font-bold" style={{fontSize: "17px"}}>Описание события:</span>
               <p>
-                Lorem ipsum dolor sit amet,
-                consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-                mollit anim id est laborum.
+                {currentEvent?.description}
               </p>
             </p>
 
@@ -349,7 +335,7 @@ const Home: React.FC = () => {
           <div className="overflow-y-auto h-64 py-4 px-4 w-auto  flex flex-col justify-start items-start">
             <VersionList />
           </div>
-        </div>
+        </div>}
       </div>
     </BasicLayout>
   );
