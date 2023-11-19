@@ -1,12 +1,13 @@
 "use client";
 
 import { User } from "@/models/User";
-import { Avatar, Button, Divider, Form, Image, Input } from "antd";
+import { App, Avatar, Button, Divider, Form, Image, Input } from "antd";
 import React, { useState, useEffect } from "react";
 import { getToken, setToken } from "@/app/api/token";
-import authFetch from "@/services/AuthFetchService";
+import authFetch, { getUser, loginUserByEmail } from "@/services/AuthFetchService";
 import api from "@/services/GetAuthorizedUserService";
 import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
 
 type FieldType = {
   username?: string;
@@ -17,6 +18,8 @@ type FieldType = {
 export default function AnotherPage() {
   const [user, setUser] = useState<User | undefined>(undefined);
   const { push } = useRouter();
+  const {message} = App.useApp();
+  const [btnLoading, setBtnLoading] = useState<boolean>(false);
 
   const getData = async () => {
     const { data } = await api.get(`http://192.168.137.1:3000/auth/hello`);
@@ -44,8 +47,25 @@ export default function AnotherPage() {
     };
   }, []);
 
-  const login = (provider: string) => {
+  const onFinish = async (content: { password: string; username: string }) => {
+    console.log({ content });
 
+    setBtnLoading(true);
+    try {
+      await loginUserByEmail(content.username, content.password);
+      const user = await getUser();
+      console.log(user);
+      message.success(`Добро пожаловать, ${user.fullName}`);
+      push('/events');
+    } catch (e) {
+      message.error((e as AxiosError).message);
+    } finally {
+      setBtnLoading(false);
+    }
+
+  };
+
+  const login = (provider: string) => {
     const authWindow = window.open(
       `http://192.168.137.1:3000/auth/${provider}`,
       "Auth",
@@ -62,6 +82,7 @@ export default function AnotherPage() {
 
   return (
     <div className="flex flex-row justify-center items-center bg-slate-200 w-full h-full">
+      
       <div className="px-4 py-4 justify-between items-center rounded-lg flex flex-col bg-white min-w-[200px]  border-slate-300 border border-solid">
         <Image
           className="mb-8"
@@ -78,7 +99,7 @@ export default function AnotherPage() {
           labelCol={{ span: 8 }}
           className="w-full mb-0"
           // initialValues
-          // onFinish={onFinish}  
+          onFinish={onFinish}
           // onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
@@ -99,7 +120,7 @@ export default function AnotherPage() {
           </Form.Item>
 
           <Form.Item className="w-full mb-0">
-            <Button className="w-full mt-4" type="primary" htmlType="submit">
+            <Button loading={btnLoading} className="w-full mt-4" type="primary" htmlType="submit">
               Войти
             </Button>
           </Form.Item>
@@ -107,12 +128,8 @@ export default function AnotherPage() {
         <Divider />
         <div className="flex w-full flex-col gap-2">
           {/* <Button onClick={() => login("google")}>Google</Button> */}
-          <Button onClick={() => login("yandex")}>
-            Yandex
-          </Button>
-          <Button onClick={() => push("/events")}>
-            Войти как гость
-          </Button>
+          <Button onClick={() => login("yandex")}>Yandex</Button>
+          <Button onClick={() => push("/events")}>Войти как гость</Button>
         </div>
       </div>
     </div>

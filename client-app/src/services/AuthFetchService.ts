@@ -1,4 +1,24 @@
-import {getToken} from "@/app/api/token";
+import {getToken, setToken} from "@/app/api/token";
+import { User, UserToken } from "@/models/User";
+import axios from "axios";
+import api from "./GetAuthorizedUserService";
+
+export async function loginUserByEmail(email: string, password: string): Promise<string> {
+  const { data } = await api.post('/login', { email, password });
+
+  const { access_token } = data;
+
+  console.log({access_token});
+  setToken(access_token);
+
+  return access_token;
+}
+
+export async function getUser(): Promise<User> {
+  const { data } = await api.get<User>('/user');
+
+  return new User(data);
+}
 
 const authFetch = async (
   input: RequestInfo,
