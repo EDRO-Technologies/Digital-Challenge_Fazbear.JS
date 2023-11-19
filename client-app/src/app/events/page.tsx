@@ -7,20 +7,15 @@ import {
   Button,
   Divider,
   List,
-  Select,
   Tag,
-  Tooltip,
-  Input,
   Modal,
   Timeline,
 } from "antd";
-import TextArea from "antd/es/input/TextArea";
 import EventRecord from "@/components/EventRecord/EventRecord";
-import cl from "./events.module.css";
 import BasicLayout from "@/components/BasicLayout";
 import NewEventForm from "@/components/NewEventForm";
 import EditEventForm from "@/components/EditEventForm";
-import {ExperimentOutlined, FireOutlined, SafetyOutlined, ToolOutlined} from "@ant-design/icons";
+import {ExperimentOutlined, FireOutlined, SafetyOutlined, SearchOutlined, ToolOutlined} from "@ant-design/icons";
 
 const Labeled: React.FC<{ children: any; label: string }> = (props) => {
   return (
@@ -234,7 +229,7 @@ const Home: React.FC = () => {
         handleCancel={handleEditEventCancel}
         open={editEventOpen}
       />
-      <div className=" overflow-auto flex flex-row h-full w-full  rounded-lg">
+      <div className="overflow-auto flex flex-row h-full w-full  rounded-lg">
         <div className="flex flex-col max-w-[450px] w-full">
           <div className="border-solid border-b mb-2 border-slate-300 px-2 py-4 bg-slate-50 justify-between flex flex-row">
             <Button>Экспорт данных</Button>
@@ -242,6 +237,7 @@ const Home: React.FC = () => {
               Добавить
             </Button>
           </div>
+          <Button className="m-2" icon={<SearchOutlined />}>Поиск</Button>
 
           <div
             className="bg-slate-200 px-2 flex flex-col overflow-y-scroll"
