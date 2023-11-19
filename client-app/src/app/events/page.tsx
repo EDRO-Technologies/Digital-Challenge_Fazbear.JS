@@ -16,8 +16,7 @@ import EventRecord from "@/components/EventRecord/EventRecord";
 import BasicLayout from "@/components/BasicLayout";
 import NewEventForm from "@/components/NewEventForm";
 import EditEventForm from "@/components/EditEventForm";
-import {ExperimentOutlined, FireOutlined, SafetyOutlined, SearchOutlined, ToolOutlined} from "@ant-design/icons";
-import { Event } from "@/models/Event";
+import {ExperimentOutlined, FireOutlined, SafetyOutlined, ToolOutlined} from "@ant-design/icons";
 import { getAllEvents } from "@/services/EventService";
 import { AxiosError } from "axios";
 
@@ -27,43 +26,6 @@ const Labeled: React.FC<{ children: any; label: string }> = (props) => {
       <h2>{props.label}</h2>
       <div>{props.children}</div>
     </div>
-  );
-};
-
-const HistoryList: React.FC = () => {
-  const data = [
-    {
-      title: "Обновил команду",
-    },
-    {
-      title: "Обновил команду",
-    },
-    {
-      title: "Обновил команду",
-    },
-    {
-      title: "Создал команду",
-    },
-  ];
-
-  return (
-    <List
-      itemLayout="horizontal"
-      dataSource={data}
-      renderItem={(item, index) => (
-        <List.Item>
-          <List.Item.Meta
-            avatar={
-              <Avatar
-                src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`}
-              />
-            }
-            title={<a href="https://ant.design">{index}</a>}
-            description={item.title}
-          />
-        </List.Item>
-      )}
-    />
   );
 };
 
@@ -124,9 +86,6 @@ const ModalAddNewEvent: React.FC<{
         <Button key="back" onClick={handleCancel} className="border-rose-600 text-rose-600 hover:bg-rose-600">
           Отменить
         </Button>,
-        <Button key="submit" onClick={handleOk}  type="primary">
-          Подтвердить
-        </Button>,
       ]}
     >
       <NewEventForm />
@@ -150,9 +109,6 @@ const ModalEditEvent: React.FC<{
       footer ={[
         <Button key="back" onClick={handleCancel} className="border-rose-600 text-rose-600 hover:bg-rose-600">
           Отменить
-        </Button>,
-        <Button key="submit" onClick={handleCancel} type="primary">
-          Подтвердить
         </Button>,
       ]}
     >

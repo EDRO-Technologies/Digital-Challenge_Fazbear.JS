@@ -7,6 +7,8 @@ import {
   Select, Upload, UploadProps,
 } from 'antd';
 import {UploadOutlined} from "@ant-design/icons";
+import {Simulate} from "react-dom/test-utils";
+import submit = Simulate.submit;
 
 const { Option } = Select;
 
@@ -18,6 +20,19 @@ const formItemLayout = {
   wrapperCol: {
     xs: { span: 24 },
     sm: { span: 16 },
+  },
+};
+
+const tailFormItemLayout = {
+  wrapperCol: {
+    xs: {
+      span: 24,
+      offset: 0,
+    },
+    sm: {
+      span: 16,
+      offset: 8,
+    },
   },
 };
 
@@ -111,6 +126,11 @@ const NewEventForm: React.FC = () => {
           rules={[{ required: true, message: 'Please input Intro' }]}
         >
           <Input.TextArea showCount maxLength={100} />
+        </Form.Item>
+        <Form.Item {...tailFormItemLayout}>
+          <Button type="primary" htmlType="submit">
+            создать событие
+          </Button>
         </Form.Item>
       </Form>
       <Upload {...props}>

@@ -21,6 +21,19 @@ const formItemLayout = {
   },
 };
 
+const tailFormItemLayout = {
+  wrapperCol: {
+    xs: {
+      span: 24,
+      offset: 0,
+    },
+    sm: {
+      span: 16,
+      offset: 8,
+    },
+  },
+};
+
 const props: UploadProps = {
   name: 'file',
   action: 'https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188',
@@ -125,6 +138,11 @@ const EditEventForm: React.FC = () => {
           ]}
         >
           <Input />
+        </Form.Item>
+        <Form.Item {...tailFormItemLayout}>
+          <Button type="primary" htmlType="submit">
+            создать событие
+          </Button>
         </Form.Item>
       </Form>
       <Upload {...props}>
