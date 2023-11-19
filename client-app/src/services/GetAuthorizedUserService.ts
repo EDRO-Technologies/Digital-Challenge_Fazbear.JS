@@ -3,7 +3,9 @@ import authFetch from "@/services/AuthFetchService";
 
 import axios from "axios";
 
-const API_URL = `http://192.168.137.1:3000`;
+// const API_URL = `http://192.168.137.1:3000`;
+
+const API_URL = `http://192.168.137.217:8000/`;
 
 const api = axios.create({
   baseURL: API_URL, // Замените на вашу базовую URL-адрес
@@ -11,9 +13,8 @@ const api = axios.create({
 
 api.interceptors.request.use(
   async (config) => {
-    const token = getToken()
+    const token = getToken();
 
-    
     // Добавьте токен в заголовок Authorization
     if (token) {
       console.log(token.value);

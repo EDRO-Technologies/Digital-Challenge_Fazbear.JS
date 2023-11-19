@@ -8,6 +8,10 @@
   font-weight: 400;
 }
 
+/* * {
+  border: solid 2px red!important;
+} */
+
 /* ===== Scrollbar CSS ===== */
   /* Firefox */
   * {
@@ -17,17 +21,17 @@
 
   /* Chrome, Edge, and Safari */
   *::-webkit-scrollbar {
-    width: 11px;
+    width: 4px;
   }
 
   *::-webkit-scrollbar-track {
-    background: #ffffff;
+    background: #b7b6ba;
   }
 
   *::-webkit-scrollbar-thumb {
-    background-color: #d2d1dc;
+    background-color: #8e8d93;
     border-radius: 10px;
-    border: 3px solid #ffffff;
+    /* border: 3px solid #ffffffaa; */
   }
 
 html, body, div, span, applet, object, iframe,
@@ -55,6 +59,8 @@ time, mark, audio, video {
 :focus {
   outline: 0;
 }
+
+
 
 /* HTML5 display-role reset for older browsers */
 article,
