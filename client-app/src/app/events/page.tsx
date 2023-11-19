@@ -250,7 +250,7 @@ const Home: React.FC = () => {
                   key={data.id}
                   label={data.type.name}
                   risk={data.level}
-                  date={data.creation_date.toLocaleDateString()}
+                  date={data.creation_date.toLocaleString()}
                   version={data.version}
                   eventType={data.type.name}
                   id={index}
