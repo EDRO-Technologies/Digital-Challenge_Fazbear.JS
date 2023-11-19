@@ -67,40 +67,42 @@ const HistoryList: React.FC = () => {
   );
 };
 
+interface ItemListProps {
+  name:     string;
+  action:   string;
+}
+
 const VersionList: React.FC = () => {
-  const Item: React.FC = () => {
+  const versionListData = [
+    {datetime: "2023-09-01 09:12:11", name: "Тестович Т.Т.", action: "Изменил поле ****"},
+    {datetime: "2023-08-30 12:00:00", name: "Пользович П.П.", action: "Устранил инцидент номер 123"},
+    {datetime: "2023-08-29 09:55:04", name: "Юзерович Ю.Ю.", action: "Провел техническое тестирование"},
+    {datetime: "2023-07-15 11:23:06", name: "Испытаючич И.И.", action: "Закрыл смену"},
+    {datetime: "2023-08-29 09:55:04", name: "Юзерович Ю.Ю.", action: "Провел техническое тестирование"},
+  ]
+  const Item: React.FC<ItemListProps> = ({name, action}) => {
     return (
       <div className="flex flex-row justify-between items-start">
         <div className="flex flex-col">
-          <div className="font-semibold">Тестович О.В</div>
-          <div>Обновил поле ****</div>
+          <div className="font-semibold">{name}</div>
+          <div>{action}</div>
         </div>
         <Button>Посмотреть</Button>
       </div>
     );
   };
 
+
   return (
     <Timeline
       className="w-full"
       mode="left"
-      items={[
+      items ={versionListData.map((data) => (
         {
-          label: <div className="flex flex-row w-full">2015-09-01 09:12:11</div>,
-          children: <Item />,
-        },
-        {
-          label: "2015-09-01 09:12:11",
-          children: "Solve initial network problems",
-        },
-        {
-          children: "Technical testing",
-        },
-        {
-          label: "2015-09-01 09:12:11",
-          children: "Network problems being solved",
-        },
-      ]}
+          label: <div className="flex flex-row w-full">{data.datetime}</div>,
+          children: <Item name={data.name} action={data.action}/>
+        }
+      ))}
     />
   );
 };
@@ -305,9 +307,9 @@ const Home: React.FC = () => {
             </Labeled>
           </div>
           <Divider />
-          <h2 className="text-xl">История изменений</h2>
+          <h2 className="text-xl font-semibold">История изменений</h2>
           <div className="overflow-y-auto h-64 py-4 px-4 w-auto  flex flex-col justify-start items-start">
-            <VersionList/>
+            <VersionList />
           </div>
         </div>
       </div>
