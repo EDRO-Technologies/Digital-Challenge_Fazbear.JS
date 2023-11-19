@@ -7,19 +7,15 @@ import {
   Button,
   Divider,
   List,
-  Select,
   Tag,
-  Tooltip,
-  Input,
   Modal,
   Timeline,
 } from "antd";
-import TextArea from "antd/es/input/TextArea";
 import EventRecord from "@/components/EventRecord/EventRecord";
-import cl from "./events.module.css";
 import BasicLayout from "@/components/BasicLayout";
 import NewEventForm from "@/components/NewEventForm";
 import EditEventForm from "@/components/EditEventForm";
+import {ExperimentOutlined, FireOutlined, SafetyOutlined, SearchOutlined, ToolOutlined} from "@ant-design/icons";
 
 const Labeled: React.FC<{ children: any; label: string }> = (props) => {
   return (
@@ -67,40 +63,42 @@ const HistoryList: React.FC = () => {
   );
 };
 
+interface ItemListProps {
+  name:     string;
+  action:   string;
+}
+
 const VersionList: React.FC = () => {
-  const Item: React.FC = () => {
+  const versionListData = [
+    {datetime: "2023-09-01 09:12:11", name: "Тестович Т.Т.", action: "Изменил поле ****"},
+    {datetime: "2023-08-30 12:00:00", name: "Пользович П.П.", action: "Устранил инцидент номер 123"},
+    {datetime: "2023-08-29 09:55:04", name: "Юзерович Ю.Ю.", action: "Провел техническое тестирование"},
+    {datetime: "2023-07-15 11:23:06", name: "Испытаючич И.И.", action: "Закрыл смену"},
+    {datetime: "2023-08-29 09:55:04", name: "Юзерович Ю.Ю.", action: "Провел техническое тестирование"},
+  ]
+  const Item: React.FC<ItemListProps> = ({name, action}) => {
     return (
       <div className="flex flex-row justify-between items-start">
         <div className="flex flex-col">
-          <div className="font-semibold">Тестович О.В</div>
-          <div>Обновил поле ****</div>
+          <div className="font-semibold">{name}</div>
+          <div>{action}</div>
         </div>
         <Button>Посмотреть</Button>
       </div>
     );
   };
 
+
   return (
     <Timeline
       className="w-full"
       mode="left"
-      items={[
+      items ={versionListData.map((data) => (
         {
-          label: <div className="flex flex-row w-full">2015-09-01 09:12:11</div>,
-          children: <Item />,
-        },
-        {
-          label: "2015-09-01 09:12:11",
-          children: "Solve initial network problems",
-        },
-        {
-          children: "Technical testing",
-        },
-        {
-          label: "2015-09-01 09:12:11",
-          children: "Network problems being solved",
-        },
-      ]}
+          label: <div className="flex flex-row w-full">{data.datetime}</div>,
+          children: <Item name={data.name} action={data.action}/>
+        }
+      ))}
     />
   );
 };
@@ -231,7 +229,7 @@ const Home: React.FC = () => {
         handleCancel={handleEditEventCancel}
         open={editEventOpen}
       />
-      <div className=" overflow-auto flex flex-row h-full w-full  rounded-lg">
+      <div className="overflow-auto flex flex-row h-full w-full  rounded-lg">
         <div className="flex flex-col max-w-[450px] w-full">
           <div className="border-solid border-b mb-2 border-slate-300 px-2 py-4 bg-slate-50 justify-between flex flex-row">
             <Button>Экспорт данных</Button>
@@ -239,6 +237,7 @@ const Home: React.FC = () => {
               Добавить
             </Button>
           </div>
+          <Button className="m-2" icon={<SearchOutlined />}>Поиск</Button>
 
           <div
             className="bg-slate-200 px-2 flex flex-col overflow-y-scroll"
@@ -265,16 +264,16 @@ const Home: React.FC = () => {
             <Button danger onClick={showEditEventModal}>Редактировать</Button>
           </div>
           <div className="flex flex-col gap-4">
-            <p className="text-xl">
-              <span className="font-semibold">Тип:</span>
-              {"\t"} Инцидент
+            <p>
+              <span className="font-bold" style={{fontSize: "17px"}}>Тип:</span>
+              {"\t"} <span style={{fontSize: "17px"}}>Инцидент</span>
             </p>
-            <p className="text-xl">
-              <span className="font-semibold">Уровень угрозы:</span>
+            <p>
+              <span className="font-bold" style={{fontSize: "17px"}}>Уровень угрозы:</span>
               {"\t"} <Tag color="success" style={{fontSize: "14px"}}>слабый</Tag>
             </p>
             <p>
-              <span className="text-xl font-semibold">Описание события:</span>
+              <span className="font-bold" style={{fontSize: "17px"}}>Описание события:</span>
               <p>
                 Lorem ipsum dolor sit amet,
                 consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -285,29 +284,34 @@ const Home: React.FC = () => {
               </p>
             </p>
 
-            <Labeled label="Кому предназначено:">
-              <Avatar.Group>
-                <Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel&key=1" />
-                <a href="https://ant.design">
-                  <Avatar style={{ backgroundColor: "#f56a00" }}>K</Avatar>
-                </a>
-                <Tooltip title="Ant User" placement="top">
-                  <Avatar
-                    style={{ backgroundColor: "#87d068" }}
-                    // icon={< />}
-                  />
-                </Tooltip>
-                <Avatar
-                  style={{ backgroundColor: "#1677ff" }}
-                  // icon={<AntDesignOutlined />}
-                />
-              </Avatar.Group>
+            <p className="font-bold" style={{fontSize: "17px"}}>Кому предназначено:</p>
+            <Labeled label="">
+              <Tag
+                icon={<FireOutlined />}
+                color={"red"}
+                className="p-2 font-semibold"
+              >Пожарня часть</Tag>
+              <Tag
+                icon={<SafetyOutlined />}
+                color={"blue"}
+                className="p-2 font-semibold"
+              >Охранная часть</Tag>
+              <Tag
+                icon={<ToolOutlined />}
+                color={"warning"}
+                className="p-2 font-semibold"
+              >Инженеры</Tag>
+              <Tag
+                icon={<ExperimentOutlined />}
+                color={"success"}
+                className="p-2 font-semibold"
+              >Хим безопасность</Tag>
             </Labeled>
           </div>
           <Divider />
-          <h2 className="text-xl">История изменений</h2>
+          <h2 className="text-xl font-semibold">История изменений</h2>
           <div className="overflow-y-auto h-64 py-4 px-4 w-auto  flex flex-col justify-start items-start">
-            <VersionList/>
+            <VersionList />
           </div>
         </div>
       </div>

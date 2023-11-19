@@ -37,33 +37,26 @@ const Home: React.FC = () => {
 
     <BasicLayout>
 
-    <div className="flex flex-row items-center justify-center h-full w-full bg-white rounded-lg">
-      <div>
-        <Button onClick={showModal} type="primary">
-          СИНИЙ БОТТОН??? 
-        </Button>
-        <Modal title="Заполнение формы" open={open} onOk={handleOk} confirmLoading={confirmLoading} onCancel={(handleCancel)}>
-          <div  className="flex flex-col gap-3">
-          <div className="flex flex-row gap-3 items-center w-full">
-              <text>Уровень критичности</text>
-              <Select defaultValue=" " className="flex-auto" onChange={() => {}}
-                options={[
-                  { value: '0', label: 'Green' },
-                  { value: '1', label: 'Yellow' },
-                  { value: '2', label: 'Red' },
-                ]}
-              />
-            </div>
-            <div className="flex flex-row gap-3 items-center">
-              <text>Тип события</text>
-              <div className="flex flex-row gap-3"></div>
-            </div>
-            <text>Описание события:</text>
-            <TextArea rows={4}/>
+      <div className="flex flex-row items-center justify-center h-full w-full bg-white rounded-lg">
+        <div className="h-full flex flex-col gap-20 p-5">
+          <div className="self-center flex flex-col items-center">
+            <p className="text-4xl font-bold">Хакатон "Digital challenge"</p>
+            <p className="text-3xl font-bold">Команда "Fasbear.js"</p>
           </div>
-        </Modal>
+          <div style={{width: "80%", alignSelf: "center"}}>
+            <p className="text-3xl font-bold">Кейс №2</p>
+            <p className="text-2xl font-bold">Электронный журнал регистрации</p>
+          </div>
+          <div style={{width: "80%", alignSelf: "center"}}>
+            <p className="font-bold text-2xl">Описаниек кейса:</p>
+            <p className="text-xl">
+              Веб приложение, которое позволяет автоматизировать
+              процесс регистрации информации для формирования
+              Журнала производственно-диспетчерской службы
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
 
     </BasicLayout>
 

@@ -25,6 +25,7 @@ const Charts: React.FC = () => {
     series.columns.template.tooltipText = '{categoryX}: [bold]{valueY}[/]';
     // Установка цвета столбцов на основе данных
     series.columns.template.adapter.add('fill', function(fill, target) {
+      // @ts-ignore
       return am4core.color(target.dataItem.dataContext.color);
     });
 
