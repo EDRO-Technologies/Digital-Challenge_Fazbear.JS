@@ -11,6 +11,8 @@ import {
   Modal,
   Timeline,
   DatePicker,
+  Empty,
+  Spin,
 } from "antd";
 import EventRecord from "@/components/EventRecord/EventRecord";
 import BasicLayout from "@/components/BasicLayout";
@@ -170,7 +172,7 @@ const Home: React.FC = () => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   // const [dateRangeOpen, setDateRangeOpen]   = useState(false);
   const [currentEvent, setCurrentEvent] = useState<Event | undefined>(undefined);
-
+  const [isEventsLoading, setEventsLoading] = useState<boolean>(true);
 
   const showNewEventModal = () => {
     setNewEventOpen(true);
@@ -211,8 +213,9 @@ const Home: React.FC = () => {
   useEffect(() => {
     const fetch = async () => {
       try {
+        setEventsLoading(true);
         const res = await getAllEvents();
-
+        setEventsLoading(false);
         setEventData(res);
       } catch (e) {
         message.error(`${(e as AxiosError).cause} ${(e as AxiosError).message}`);
@@ -267,6 +270,9 @@ const Home: React.FC = () => {
             <RangePicker showTime />
           </div>
           <div className="bg-slate-200 px-2 flex flex-col overflow-y-scroll">
+            <Spin spinning={isEventsLoading}>
+
+            
             {eventData.map((data, index) => (
               <EventRecord
                 key       = {data.id}
@@ -279,8 +285,11 @@ const Home: React.FC = () => {
                 onView={(i) => setCurrentEvent(eventData[i])}
               ></EventRecord>
             ))}
+            </Spin>
           </div>
         </div>
+
+        {!currentEvent && <div className="bg-slate-50 flex w-full flex-row justify-center items-center"><Empty/></div>}
 
         {currentEvent && <div className="bg-white w-full h-0 min-h-full px-16 py-4">
           <div className="flex flex-row justify-between mb-8">
