@@ -10,6 +10,7 @@ import {
   Tag,
   Modal,
   Timeline,
+  DatePicker,
 } from "antd";
 import EventRecord from "@/components/EventRecord/EventRecord";
 import BasicLayout from "@/components/BasicLayout";
@@ -160,11 +161,14 @@ const ModalEditEvent: React.FC<{
   );
 };
 
+const { RangePicker } = DatePicker;
+
 const Home: React.FC = () => {
   const { message } = App.useApp();
-  const [newEventOpen, setNewEventOpen] = useState(false);
-  const [editEventOpen, setEditEventOpen] = useState(false);
+  const [newEventOpen, setNewEventOpen]     = useState(false);
+  const [editEventOpen, setEditEventOpen]   = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  // const [dateRangeOpen, setDateRangeOpen]   = useState(false);
 
 
   const showNewEventModal = () => {
@@ -186,9 +190,9 @@ const Home: React.FC = () => {
   };
 
   const handleNewEventCancel = () => {
-    console.log("Clicked cancel button");
     setNewEventOpen(false);
   };
+
   const handleEditEventOk = () => {
     setConfirmLoading(true);
     setTimeout(() => {
@@ -198,7 +202,6 @@ const Home: React.FC = () => {
   };
   
   const handleEditEventCancel = () => {
-    console.log("Clicked cancel button");
     setEditEventOpen(false);
   };
   
@@ -262,19 +265,19 @@ const Home: React.FC = () => {
         handleCancel={handleEditEventCancel}
         open={editEventOpen}
       />
+
       <div className="overflow-auto flex flex-row h-full w-full  rounded-lg">
-        <div className="flex flex-col max-w-[450px] w-full">
-          <div className="border-solid border-b mb-2 border-slate-300 px-2 py-4 bg-slate-50 justify-between flex flex-row">
+        <div className="flex flex-col max-w-[450px] w-full items-stretch gap-2">
+          <div className="border-solid border-b border-slate-300 px-2 py-4 bg-slate-50 justify-between flex flex-row">
             <Button>Экспорт данных</Button>
             <Button onClick={showNewEventModal} type="primary">
               Добавить
             </Button>
           </div>
-          <Button className="m-2" icon={<SearchOutlined />}>Поиск</Button>
-
-          <div
-            className="bg-slate-200 px-2 flex flex-col overflow-y-scroll"
-          >
+          <div className="self-center">
+            <RangePicker showTime />
+          </div>
+          <div className="bg-slate-200 px-2 flex flex-col overflow-y-scroll">
             {eventData.map((data) => (
               <EventRecord
                 key       = {data.label}
