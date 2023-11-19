@@ -20,6 +20,7 @@ import cl from "./events.module.css";
 import BasicLayout from "@/components/BasicLayout";
 import NewEventForm from "@/components/NewEventForm";
 import EditEventForm from "@/components/EditEventForm";
+import {ExperimentOutlined, FireOutlined, SafetyOutlined, ToolOutlined} from "@ant-design/icons";
 
 const Labeled: React.FC<{ children: any; label: string }> = (props) => {
   return (
@@ -267,16 +268,16 @@ const Home: React.FC = () => {
             <Button danger onClick={showEditEventModal}>Редактировать</Button>
           </div>
           <div className="flex flex-col gap-4">
-            <p className="text-xl">
-              <span className="font-semibold">Тип:</span>
-              {"\t"} Инцидент
+            <p>
+              <span className="font-bold" style={{fontSize: "17px"}}>Тип:</span>
+              {"\t"} <span style={{fontSize: "17px"}}>Инцидент</span>
             </p>
-            <p className="text-xl">
-              <span className="font-semibold">Уровень угрозы:</span>
+            <p>
+              <span className="font-bold" style={{fontSize: "17px"}}>Уровень угрозы:</span>
               {"\t"} <Tag color="success" style={{fontSize: "14px"}}>слабый</Tag>
             </p>
             <p>
-              <span className="text-xl font-semibold">Описание события:</span>
+              <span className="font-bold" style={{fontSize: "17px"}}>Описание события:</span>
               <p>
                 Lorem ipsum dolor sit amet,
                 consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -287,23 +288,28 @@ const Home: React.FC = () => {
               </p>
             </p>
 
-            <Labeled label="Кому предназначено:">
-              <Avatar.Group>
-                <Avatar src="https://xsgames.co/randomusers/avatar.php?g=pixel&key=1" />
-                <a href="https://ant.design">
-                  <Avatar style={{ backgroundColor: "#f56a00" }}>K</Avatar>
-                </a>
-                <Tooltip title="Ant User" placement="top">
-                  <Avatar
-                    style={{ backgroundColor: "#87d068" }}
-                    // icon={< />}
-                  />
-                </Tooltip>
-                <Avatar
-                  style={{ backgroundColor: "#1677ff" }}
-                  // icon={<AntDesignOutlined />}
-                />
-              </Avatar.Group>
+            <p className="font-bold" style={{fontSize: "17px"}}>Кому предназначено:</p>
+            <Labeled label="">
+              <Tag
+                icon={<FireOutlined />}
+                color={"red"}
+                className="p-2 font-semibold"
+              >Пожарня часть</Tag>
+              <Tag
+                icon={<SafetyOutlined />}
+                color={"blue"}
+                className="p-2 font-semibold"
+              >Охранная часть</Tag>
+              <Tag
+                icon={<ToolOutlined />}
+                color={"warning"}
+                className="p-2 font-semibold"
+              >Инженеры</Tag>
+              <Tag
+                icon={<ExperimentOutlined />}
+                color={"success"}
+                className="p-2 font-semibold"
+              >Хим безопасность</Tag>
             </Labeled>
           </div>
           <Divider />
