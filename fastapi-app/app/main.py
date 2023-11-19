@@ -153,6 +153,11 @@ async def get_events(authorization: str = Header(...), skip: int = 0, limit: int
 
 
 @app.get("/generate_reports/", tags=[Tags.common], dependencies=[Depends(get_db)])
-def get_setlist_pdf():
+def get_reports():
     path = crud.generate_files()
     return FileResponse(path=path, filename=f"Report.zip", media_type="application/zip")
+
+
+@app.get("/generate_stats/", tags=[Tags.common], dependencies=[Depends(get_db)])
+def get_stats():
+    return crud.generate_stats()

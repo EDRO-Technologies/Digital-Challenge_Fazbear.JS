@@ -21,6 +21,10 @@ def get_users(skip: int = 0, limit: int = 100):
     return list(models.User.select().offset(skip).limit(limit))
 
 
+def get_types(skip: int = 0, limit: int = 100):
+    return list(models.Event_type.select().offset(skip).limit(limit))
+
+
 def create_user(user: schemas.UserCreate):
     salt = bcrypt.gensalt()
     # print("USER: ", user)
@@ -87,3 +91,13 @@ def generate_files():
         table.append(struct)
     path = export_ex.process_files(table)
     return path
+
+
+def generate_stats():
+    types = get_types()
+    events = get_events()
+    d = {}
+    for t in types:
+        c = models.Event.select(models.Event.type).where(models.Event.type == t).count()
+        d[t.name] = c
+    return d
