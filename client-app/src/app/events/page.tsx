@@ -200,21 +200,21 @@ const Home: React.FC = () => {
   };
 
   const eventData = [
-    { label: "закрытие смены", type: 3, date: "12.03.23 8:00" },
-    { label: "Привозка груза", type: 1, date: "12.03.23 8:00" },
-    { label: "Привозка груза", type: 0, date: "12.03.23 8:00" },
-    { label: "Привозка груза", type: 2, date: "12.03.23 8:00" },
-    { label: "Привозка груза", type: 0, date: "12.03.23 8:00" },
-    { label: "Привозка груза", type: 0, date: "12.03.23 8:00" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00" },
-    { label: "Открытие смены", type: 3, date: "12.03.23 8:00" },
+    { label: "закрытие смены", type: 3, date: "12.03.23 8:00", version: "вер 3"},
+    { label: "Привозка груза", type: 1, date: "12.03.23 8:00", version: "вер 1" },
+    { label: "Привозка груза", type: 0, date: "12.03.23 8:00", version: "вер 2" },
+    { label: "Привозка груза", type: 2, date: "12.03.23 8:00", version: "вер 4" },
+    { label: "Привозка груза", type: 0, date: "12.03.23 8:00", version: "вер 1" },
+    { label: "Привозка груза", type: 0, date: "12.03.23 8:00", version: "вер 1" },
+    { label: "Открытие смены", type: 3, date: "12.03.23 8:00", version: "вер 1" },
+    { label: "Открытие смены", type: 3, date: "12.03.23 8:00", version: "вер 5" },
+    { label: "Открытие смены", type: 3, date: "12.03.23 8:00", version: "вер 1" },
+    { label: "Открытие смены", type: 3, date: "12.03.23 8:00", version: "вер 2" },
+    { label: "Открытие смены", type: 3, date: "12.03.23 8:00", version: "вер 4" },
+    { label: "Открытие смены", type: 3, date: "12.03.23 8:00", version: "вер 2" },
+    { label: "Открытие смены", type: 3, date: "12.03.23 8:00", version: "вер 3" },
+    { label: "Открытие смены", type: 3, date: "12.03.23 8:00", version: "вер 2" },
+    { label: "Открытие смены", type: 3, date: "12.03.23 8:00", version: "вер 1" },
   ];
 
   return (
@@ -249,6 +249,7 @@ const Home: React.FC = () => {
                 label={data.label}
                 type={data.type}
                 date={data.date}
+                version={data.version}
               ></EventRecord>
             ))}
           </div>
